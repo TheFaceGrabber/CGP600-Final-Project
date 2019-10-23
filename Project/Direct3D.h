@@ -61,6 +61,7 @@ public:
 	float	GetAspectRatio() { return (float)m_screen_width / (float)m_screen_height; }
 
 	float	GetDeltaTime() { return m_deltaTime; }
+	float	GetTime() { return m_time; }
 
 	void	ReleaseD3D();
 	void	RunUpdate();

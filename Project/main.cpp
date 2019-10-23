@@ -1,4 +1,5 @@
 //The #include order is important
+#pragma region Includes
 #include <d3d11.h>
 #include <dxgi.h>
 #include <d3dx11.h>
@@ -11,6 +12,7 @@
 #include <xnamath.h>
 
 #include "Direct3D.h"
+#pragma endregion 
 
 #pragma region Global Variables
 HINSTANCE	g_hInst = NULL;
@@ -59,8 +61,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		{ 
 
 			Direct3D::GetInstance()->RunUpdate();
-			//g_windowTitle = "CGP600 AE2 - " + std::to_string(1.0f / Direct3D::GetInstance()->GetDeltaTime()) + " fps";
-			//SetWindowTextA(g_hWnd, g_windowTitle.c_str());
 		}
 	}
 
@@ -69,7 +69,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	return (int)msg.wParam;
 }
-
 
 HRESULT InitialiseWindow(HINSTANCE hInstance, int nCmdShow)
 {

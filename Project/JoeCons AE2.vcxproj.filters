@@ -16,20 +16,23 @@
       <Filter>ConstantBuffers</Filter>
     </ClCompile>
     <ClCompile Include="Shader.cpp" />
-    <ClCompile Include="GameObject.cpp">
-      <Filter>World</Filter>
-    </ClCompile>
-    <ClCompile Include="Component.cpp">
-      <Filter>World</Filter>
-    </ClCompile>
     <ClCompile Include="Input.cpp">
       <Filter>Input</Filter>
     </ClCompile>
     <ClCompile Include="FlyCamera.cpp">
-      <Filter>World\Components</Filter>
+      <Filter>World\Gameplay\Components</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Component.cpp">
+      <Filter>World\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>World\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>World\Scenes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -43,20 +46,23 @@
       <Filter>ConstantBuffers</Filter>
     </ClInclude>
     <ClInclude Include="Shader.h" />
-    <ClInclude Include="GameObject.h">
-      <Filter>World</Filter>
-    </ClInclude>
-    <ClInclude Include="Component.h">
-      <Filter>World</Filter>
-    </ClInclude>
     <ClInclude Include="Input.h">
       <Filter>Input</Filter>
     </ClInclude>
     <ClInclude Include="FlyCamera.h">
-      <Filter>World\Components</Filter>
+      <Filter>World\Gameplay\Components</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Component.h">
+      <Filter>World\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>World\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>World\Scenes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -72,11 +78,17 @@
     <Filter Include="World">
       <UniqueIdentifier>{82fdfd14-18e8-48f4-a89f-537f4f56fb61}</UniqueIdentifier>
     </Filter>
-    <Filter Include="World\Components">
-      <UniqueIdentifier>{ca011471-1e77-449c-b5fc-7137bc99e567}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Input">
       <UniqueIdentifier>{9f1da3a6-9fda-4017-810c-f464c65600c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="World\Gameplay">
+      <UniqueIdentifier>{4a9ee994-c849-4892-b806-c9f58dba9b97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="World\Gameplay\Components">
+      <UniqueIdentifier>{ca011471-1e77-449c-b5fc-7137bc99e567}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="World\Scenes">
+      <UniqueIdentifier>{a98a6b35-70e6-4ce3-b674-2aab57e361a5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -209,7 +209,6 @@ void Direct3D::RunUpdate()
 
 	lightBuff.LightVector = XMFLOAT3{ XMVectorGetX(lightDirVec), XMVectorGetY(lightDirVec), XMVectorGetZ(lightDirVec) };
 	lightBuff.CameraPosition = Camera::GetMain()->GetPosition();
-	OutputDebugString((std::to_string(Camera::GetMain()->GetPosition().x) + "," + std::to_string(Camera::GetMain()->GetPosition().y) + "," + std::to_string(Camera::GetMain()->GetPosition().z) + "\n").c_str());
 	lightBuff.LightColour = XMFLOAT4{ 0.98, 0.94, 0.78, 1 };
 	lightBuff.LightIntensity = 1.5;
 	lightBuff.AmbientColour = XMFLOAT4{ .25, .25, .25, 1.0f };

@@ -26,9 +26,9 @@ void Input::Update()
 	hr = m_pMseDevice->GetDeviceState(sizeof(m_MseState), (LPVOID)&m_MseState);
 	if (FAILED(hr))
 	{
-		m_MseState.lX = 0;
-		m_MseState.lY = 0;
-		m_MseState.lZ = 0;
+		//m_MseState.lX = 0;
+		//m_MseState.lY = 0;
+		//m_MseState.lZ = 0;
 		if (hr == DIERR_INPUTLOST || hr == DIERR_NOTACQUIRED)
 		{
 			m_pMseDevice->Acquire();
