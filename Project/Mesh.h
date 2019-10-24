@@ -38,5 +38,6 @@ public:
 	void ApplyVertices(vector<DefaultVertex> verts, bool applyMesh = false);
 
 	void Draw();
+	void UpdateMaterial(string materialLoc);
 	void ApplyMesh();
 };

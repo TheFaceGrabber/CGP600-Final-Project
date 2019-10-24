@@ -15,7 +15,6 @@
     <ClCompile Include="ConstantBuffers.cpp">
       <Filter>ConstantBuffers</Filter>
     </ClCompile>
-    <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Input.cpp">
       <Filter>Input</Filter>
     </ClCompile>
@@ -34,6 +33,15 @@
     <ClCompile Include="Scene.cpp">
       <Filter>World\Scenes</Filter>
     </ClCompile>
+    <ClCompile Include="DirectionLight.cpp">
+      <Filter>World\Gameplay\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshRenderer.cpp">
+      <Filter>World\Gameplay\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Mesh.h">
@@ -45,7 +53,6 @@
     <ClInclude Include="ConstantBuffers.h">
       <Filter>ConstantBuffers</Filter>
     </ClInclude>
-    <ClInclude Include="Shader.h" />
     <ClInclude Include="Input.h">
       <Filter>Input</Filter>
     </ClInclude>
@@ -63,6 +70,15 @@
     </ClInclude>
     <ClInclude Include="Scene.h">
       <Filter>World\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectionLight.h">
+      <Filter>World\Gameplay\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshRenderer.h">
+      <Filter>World\Gameplay\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -90,5 +106,16 @@
     <Filter Include="World\Scenes">
       <UniqueIdentifier>{a98a6b35-70e6-4ce3-b674-2aab57e361a5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Assets">
+      <UniqueIdentifier>{755657c1-1c8f-4ded-aa6e-f0d08508354a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Levels">
+      <UniqueIdentifier>{59bed21b-9f2d-4f66-824d-79311011a462}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Levels\Test.jscene">
+      <Filter>Assets\Levels</Filter>
+    </None>
   </ItemGroup>
 </Project>

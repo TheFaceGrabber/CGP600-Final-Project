@@ -19,6 +19,8 @@ private:
 
 	void* m_Data;
 
+	std::vector<float> m_matProperties;
+
 public:
 	Shader(std::string shaderFilePath);
 	~Shader();
@@ -31,6 +33,8 @@ public:
 
 	void* GetData();
 	void SetData(void* data);
+
+	void Update();
 
 	static Shader* LoadFromMaterial(std::string materialFile);
 };

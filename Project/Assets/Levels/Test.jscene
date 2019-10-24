@@ -1,19 +1,19 @@
 Sun
 Rotation 45 0 0 
-Colour 1 1 1
-Ambient 0.25 0.25 0.25
+Colour 1 .98 .85
+Ambient 0.33 0.33 0.33
 Intensity 2
 End
 
 Player
-Position 0 0 0 
+Position 0 0 -5 
 Rotation 0 0 0
 End
 
 ~Key Height Material
 Blocks
-#  1 Assets/Materials/Tiles.jmtl
--  0 Assets/Materials/Hardwood_Floor.jmtl
+# 1 Assets/Materials/Tiles.jmtl
+- 0 Assets/Materials/Hardwood_Floor.jmtl
 End
 
 Grid
@@ -26,7 +26,29 @@ Grid
 End
 
 Entity
+Name Evil-Pigeon-1
+Position -2 0 3 
+Rotation 0 0 0
+Component MeshRenderer Assets\Models\Sphere.obj Assets\Materials\Tiles.jmtl
+End
+
+Entity
 Name Evil-Pigeon
+Position 2 0 3 
+Rotation 0 0 0
 Component MeshRenderer Assets\Models\Sphere.obj Assets\Materials\Hardwood_Floor.jmtl
 End
 
+Entity
+Name Evil-Pigeon-2
+Position 6 0 3 
+Rotation 0 0 0
+Component MeshRenderer Assets\Models\Sphere.obj Assets\Materials\Wood30.jmtl
+End
+
+Entity
+Name Evil-Pigeon-3
+Position -6 0 3 
+Rotation 0 0 0
+Component MeshRenderer Assets\Models\Sphere.obj Assets\Materials\Metal07.jmtl
+End

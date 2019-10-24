@@ -73,8 +73,6 @@ void Mesh::LoadFromFile(std::string loc)
 				}
 			}
 
-			//for (int i = 0; i < 3; i++)
-			//{
 			char slash;
 			short p0 = 0, p1 = 0, p2 = 0;
 			short t0 = 0, t1 = 0, t2 = 0;
@@ -168,7 +166,13 @@ void Mesh::ApplyVertices(vector<DefaultVertex> verts, bool applyMesh)
 
 void Mesh::Draw()
 {
+	GetShader()->Update();
 	Direct3D::GetInstance()->Draw(this);
+}
+
+void Mesh::UpdateMaterial(string materialLoc)
+{
+	m_pShader = Shader::LoadFromMaterial(materialLoc);
 }
 
 void Mesh::ApplyMesh()
@@ -194,7 +198,7 @@ void Mesh::ApplyMesh()
 
 	Direct3D::GetInstance()->GetContext()->Unmap(g_pVertexBuffer, NULL);
 
-	m_pShader = Shader::LoadFromMaterial("Assets/Materials/Tiles.jmtl");
+	UpdateMaterial("Assets/Materials/Tiles.jmtl");
 	/*m_pShader = new Shader("BlinnPhong.hlsl");
 	m_pShader->ApplyTexture("Assets/Textures/hardwood-brown-planks-albedo.png", 0);
 	m_pShader->ApplyTexture("Assets/Textures/hardwood-brown-planks-specular.tif", 1);

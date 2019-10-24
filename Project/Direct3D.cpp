@@ -12,17 +12,16 @@
 #define XM_NO_ALIGNMENT
 #include <xnamath.h>
 #include "Camera.h"
+#include "DirectionLight.h"
+#include "Scene.h"
 
 
 using namespace std::chrono;
 
 Direct3D* Direct3D::m_pInstance = NULL;
 
-Mesh* m;
-GameObject* cam;
-FlyCamera* flyCam;
-float lightY;
-float lightX;
+//Mesh* m;
+Scene* scene;
 
 Direct3D::Direct3D()
 {
@@ -30,8 +29,8 @@ Direct3D::Direct3D()
 
 Direct3D::~Direct3D()
 {
-	delete m;
-	delete cam;
+	//delete m;
+	delete scene;
 	ConstantBuffers::Release();
 	Input::Release();
 }
@@ -160,9 +159,7 @@ HRESULT Direct3D::InitialiseD3D(HWND hWnd, HINSTANCE hInst)
 
 	Input::GetInstance()->Update();
 
-	cam = new GameObject("cam");
-	cam->SetPosition({ 0,0,-1 });
-	flyCam = (FlyCamera*)(cam->AddComponent(new FlyCamera()));
+	scene = Scene::LoadFromFile("Assets/Levels/Test.jscene");
 
 	return S_OK;
 }
@@ -175,8 +172,6 @@ void Direct3D::RunUpdate()
 
 	if (Input::GetInstance()->IsKeyPressed(DIK_ESCAPE))
 		DestroyWindow(m_hWnd);
-
-	cam->Update();
 
 	LightingBuffer lightBuff;
 	TransformationBuffer transBuffer;
@@ -191,32 +186,33 @@ void Direct3D::RunUpdate()
 	m_time += m_deltaTime;
 	m_fps = 1.0f / m_deltaTime;
 
+	scene->Update();
+
 	float rgba_clear_colour[4] = { 0.4, 0.58, 0.92, 1.0f };
 	g_pImmediateContext->ClearRenderTargetView(g_pBackBufferRTView, rgba_clear_colour);
 	g_pImmediateContext->ClearDepthStencilView(g_pZBuffer, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-	XMMATRIX rot = XMMatrixRotationRollPitchYaw(XMConvertToRadians(15), 0, XMConvertToRadians(0));
-	XMVECTOR lightDirVec = XMVector3Transform(XMVECTOR{ 0, 0, 1 }, rot);
+	//transBuffer.World = XMMatrixScaling(1, 1, 1) * XMMatrixRotationRollPitchYaw(0, 0, 0) * XMMatrixTranslation(3, -1, 5);
 
-	transBuffer.World = XMMatrixScaling(1, 1, 1) * XMMatrixRotationRollPitchYaw(0, 0, 0) * XMMatrixTranslation(3, -1, 5);
+	//transBuffer.WorldViewProjection = transBuffer.World * Camera::GetViewMatrix() * Camera::GetProjectionMatrix();
 
-	XMFLOAT3 r;
-	r.x = cam->GetForward().x;
-	r.y = cam->GetForward().y;
-	r.z = cam->GetForward().z;
+	if(Camera::GetMain())
+		lightBuff.CameraPosition = Camera::GetMain()->GetPosition();
 
-	transBuffer.WorldViewProjection = transBuffer.World * Camera::GetViewMatrix() * Camera::GetProjectionMatrix();
-
-	lightBuff.LightVector = XMFLOAT3{ XMVectorGetX(lightDirVec), XMVectorGetY(lightDirVec), XMVectorGetZ(lightDirVec) };
-	lightBuff.CameraPosition = Camera::GetMain()->GetPosition();
-	lightBuff.LightColour = XMFLOAT4{ 0.98, 0.94, 0.78, 1 };
-	lightBuff.LightIntensity = 1.5;
-	lightBuff.AmbientColour = XMFLOAT4{ .25, .25, .25, 1.0f };
-
+	if (DirectionLight::GetMainLight()) 
+	{
+		lightBuff.LightVector = DirectionLight::GetMainLight()->GetOwner()->GetForward();
+		lightBuff.LightColour = DirectionLight::GetMainLight()->GetColour();
+		lightBuff.LightIntensity = DirectionLight::GetMainLight()->GetIntensity();
+		lightBuff.AmbientColour = DirectionLight::GetMainLight()->GetAmbientColour();
+	}
 	ConstantBuffers::GetInstance()->Bind(BUFFER_LIGHTING, &lightBuff);
-	ConstantBuffers::GetInstance()->Bind(BUFFER_TRANSFORMATIONS, &transBuffer);
 
-	if(!m)
+	scene->UpdateGfx();
+
+	//ConstantBuffers::GetInstance()->Bind(BUFFER_TRANSFORMATIONS, &transBuffer);
+
+	/*if(!m)
 	{
 		m = new Mesh();
 		m->LoadFromFile("Assets/Models/Sphere.obj");
@@ -231,6 +227,7 @@ void Direct3D::RunUpdate()
 	ConstantBuffers::GetInstance()->Bind(BUFFER_TRANSFORMATIONS, &transBuffer);
 
 	m->Draw();
+	*/
 
 	g_pSwapChain->Present(0, 0);
 }

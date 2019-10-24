@@ -2,6 +2,12 @@
 #include "Component.h"
 #include "Direct3D.h"
 
+#define _XM_NO_INTRINSICS_
+#define XM_NO_ALIGNMENT
+#include <d3d11.h>
+#include <xnamath.h>
+#define _XM_NO_INTRINSICS_
+#define XM_NO_ALIGNMENT
 
 GameObject::GameObject(std::string name)
 {
@@ -15,12 +21,18 @@ GameObject::~GameObject()
 	{
 		delete m_vComponents[i];
 	}
-	m_vComponents.clear();
+	m_vComponents.resize(0);
 }
 
 XMMATRIX GameObject::GetWorldMatrix()
 {
-	return XMMatrixScaling(m_scale.x, m_scale.y, m_scale.z) * m_rotationQuat * XMMatrixTranslation(m_position.x, m_position.y, m_position.z);
+	//Force update rotation quaternion
+	SetRotation(m_rotation);
+	XMMATRIX trans = XMMatrixTranslation(m_position.x, m_position.y, m_position.z);
+	XMMATRIX rot = m_rotationQuat;
+	XMMATRIX scale = XMMatrixScaling(m_scale.x, m_scale.y, m_scale.z);
+
+	return scale*rot*trans;
 }
 
 XMFLOAT3 GameObject::GetForward()
@@ -60,6 +72,10 @@ void GameObject::Update()
 
 void GameObject::UpdateGfx()
 {
+	for (int i = 0; i < m_vComponents.size(); i++)
+	{
+		m_vComponents[i]->UpdateGfx();
+	}
 }
 
 Component* GameObject::AddComponent(Component* comp)

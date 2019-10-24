@@ -70,6 +70,8 @@ Shader::~Shader()
 	}
 
 	g_pTextures.clear();
+	m_matProperties.clear();
+	delete m_Data;
 }
 
 void Shader::ApplyTexture(std::string textureLocation, int index)
@@ -93,6 +95,18 @@ void Shader::SetData(void* data)
 	m_Data = data;
 
 	ConstantBuffers::GetInstance()->Bind(BUFFER_SHADER_PROPERTIES, data);
+}
+
+void Shader::Update()
+{
+	void* data = m_matProperties.data();
+
+	SetData(data);
+
+	for (int i = 0; i < g_pTextures.size(); i++)
+	{
+		Direct3D::GetInstance()->GetContext()->PSSetShaderResources(i, 1, &g_pTextures[i]);
+	}
 }
 
 Shader* Shader::LoadFromMaterial(std::string materialFile)
@@ -133,11 +147,9 @@ Shader* Shader::LoadFromMaterial(std::string materialFile)
 		}
 	}
 
-	void* data = properties.data();
-
 	Shader* shader = new Shader(shaderType + ".hlsl");
+	shader->m_matProperties = properties;
 
-	shader->SetData(data);
 	for (int i = 0; i < textures.size(); i++)
 	{
 		shader->ApplyTexture(textures[i], i);
