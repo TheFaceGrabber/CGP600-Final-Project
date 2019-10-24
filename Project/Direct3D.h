@@ -2,10 +2,6 @@
 #include <d3d11.h>
 #include <dxgi.h>
 
-#define UP XMVECTOR{0,1,0}
-#define RIGHT XMVECTOR{1,0,0}
-#define FORWARD XMVECTOR{0,0,1}
-
 #include "Mesh.h"
 
 class Direct3D
@@ -18,11 +14,6 @@ private:
 	IDXGISwapChain*			g_pSwapChain = NULL;
 
 	ID3D11RenderTargetView* g_pBackBufferRTView = NULL;
-
-	//ID3D11Buffer*			g_pVertexBuffer;
-	//ID3D11VertexShader*		g_pVertexShader;
-	//ID3D11PixelShader*		g_pPixelShader;
-	//ID3D11InputLayout*		g_pInputLayout;
 
 	ID3D11DepthStencilView* g_pZBuffer;
 
@@ -43,15 +34,12 @@ public:
 	~Direct3D();
 
 	static Direct3D* GetInstance();
-	static void Release()
-	{
-		delete m_pInstance;
-	}
+	static void Release(){delete m_pInstance;}
 
-	HRESULT InitialiseD3D(HWND hWnd, HINSTANCE hInst);
+	HRESULT		InitialiseD3D(HWND hWnd, HINSTANCE hInst);
 
-	HINSTANCE GetHInstance() { return m_hInst; }
-	HWND GetHWindow() { return m_hWnd; }
+	HINSTANCE	GetHInstance() { return m_hInst; }
+	HWND		GetHWindow() { return m_hWnd; }
 
 	void	Draw(Mesh* mesh);
 

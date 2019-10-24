@@ -1,5 +1,7 @@
 #include "Scene.h"
 #include <algorithm>
+#include <fstream>
+#include <strstream>
 
 Scene::Scene()
 {
@@ -15,6 +17,26 @@ Scene* Scene::LoadFromFile(std::string file)
 {
 	Scene* scene = new Scene();
 
+	std::ifstream f(file);
+	if (!f.is_open())
+	{
+		throw "Model file could not be openned. Reason: Location does not exists";
+		return;
+	}
+
+	std::string fileCurSection;
+
+	while (!f.eof())
+	{
+		const int size = 128;
+		char line[size];
+		f.getline(line, size);
+
+		std::strstream s;
+		s << line;
+	}
+
+	return scene;
 	//Parse jlvl file and apply to new scene object
 }
 

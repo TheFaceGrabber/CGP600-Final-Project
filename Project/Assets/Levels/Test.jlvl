@@ -10,23 +10,23 @@ Position 0 0 0
 Rotation 0 0 0
 End
 
-~Key Height Material
+~Key 	Height 	Material
 Blocks
-#  1 Assets/Materials/Tiles.jmtl
--  0 Assets/Materials/Hardwood_Floor.jmtl
+'#' 	1 		"Assets/Materials/Tiles.jmtl"
+'-' 	0 		"Assets/Materials/Hardwood_Floor.jmtl"
 End
 
 Grid
-#############
-###-------###
-###-#####-###
-#-----#-----#
-#-----#-----#
-#############
+"#############"
+"###-------###"
+"###-#####-###"
+"#-----#-----#"
+"#-----#-----#"
+"#############"
 End
 
 Entity
-Name Evil-Pigeon
-Component MeshRenderer Assets\Models\Sphere.obj Assets\Materials\Hardwood_Floor.jmtl
+Name "Evil-Pigeon"
+Component "MeshRenderer" "Assets\Models\Sphere.obj" "Assets\Materials\Hardwood_Floor.jmtl"
 End
 

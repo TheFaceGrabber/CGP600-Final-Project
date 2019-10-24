@@ -1,0 +1,32 @@
+Sun
+Rotation 45 0 0 
+Colour 1 1 1
+Ambient 0.25 0.25 0.25
+Intensity 2
+End
+
+Player
+Position 0 0 0 
+Rotation 0 0 0
+End
+
+~Key Height Material
+Blocks
+#  1 Assets/Materials/Tiles.jmtl
+-  0 Assets/Materials/Hardwood_Floor.jmtl
+End
+
+Grid
+#############
+###-------###
+###-#####-###
+#-----#-----#
+#-----#-----#
+#############
+End
+
+Entity
+Name Evil-Pigeon
+Component MeshRenderer Assets\Models\Sphere.obj Assets\Materials\Hardwood_Floor.jmtl
+End
+

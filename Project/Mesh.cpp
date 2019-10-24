@@ -24,7 +24,11 @@ void Mesh::LoadFromFile(std::string loc)
 	vector<int> uvIndex;
 
 	std::ifstream f(loc);
-	if (!f.is_open()) return;
+	if (!f.is_open()) 
+	{
+		throw "Model file could not be openned. Reason: Location does not exists";
+		return;
+	}
 
 	while (!f.eof())
 	{
@@ -190,7 +194,7 @@ void Mesh::ApplyMesh()
 
 	Direct3D::GetInstance()->GetContext()->Unmap(g_pVertexBuffer, NULL);
 
-	m_pShader = Shader::LoadFromMaterial("Assets/Materials/Hardwood_Floor.jmtl");
+	m_pShader = Shader::LoadFromMaterial("Assets/Materials/Tiles.jmtl");
 	/*m_pShader = new Shader("BlinnPhong.hlsl");
 	m_pShader->ApplyTexture("Assets/Textures/hardwood-brown-planks-albedo.png", 0);
 	m_pShader->ApplyTexture("Assets/Textures/hardwood-brown-planks-specular.tif", 1);

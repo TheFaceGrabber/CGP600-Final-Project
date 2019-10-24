@@ -195,10 +195,10 @@ void Direct3D::RunUpdate()
 	g_pImmediateContext->ClearRenderTargetView(g_pBackBufferRTView, rgba_clear_colour);
 	g_pImmediateContext->ClearDepthStencilView(g_pZBuffer, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-	XMMATRIX rot = XMMatrixRotationRollPitchYaw(XMConvertToRadians(15), m_time/2, XMConvertToRadians(0));
+	XMMATRIX rot = XMMatrixRotationRollPitchYaw(XMConvertToRadians(15), 0, XMConvertToRadians(0));
 	XMVECTOR lightDirVec = XMVector3Transform(XMVECTOR{ 0, 0, 1 }, rot);
 
-	transBuffer.World = XMMatrixScaling(1, 1, 1) * XMMatrixRotationRollPitchYaw(0, 0, 0) * XMMatrixTranslation(3, 0, 5);
+	transBuffer.World = XMMatrixScaling(1, 1, 1) * XMMatrixRotationRollPitchYaw(0, 0, 0) * XMMatrixTranslation(3, -1, 5);
 
 	XMFLOAT3 r;
 	r.x = cam->GetForward().x;
@@ -224,7 +224,7 @@ void Direct3D::RunUpdate()
 
 	m->Draw();
 
-	transBuffer.World = XMMatrixScaling(1, 1, 1) * XMMatrixRotationRollPitchYaw(0, 0, 0) * XMMatrixTranslation(-3, 0, 5);
+	transBuffer.World = XMMatrixScaling(1, 1, 1) * XMMatrixRotationRollPitchYaw(0, 0, 0) * XMMatrixTranslation(-3, -1, 5);
 
 	transBuffer.WorldViewProjection = transBuffer.World * Camera::GetViewMatrix() * Camera::GetProjectionMatrix();
 

@@ -58,6 +58,10 @@ void GameObject::Update()
 	}
 }
 
+void GameObject::UpdateGfx()
+{
+}
+
 Component* GameObject::AddComponent(Component* comp)
 {
 	comp->SetOwner(this);
