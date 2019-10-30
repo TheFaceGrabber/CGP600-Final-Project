@@ -204,3 +204,9 @@ void Mesh::ApplyMesh()
 	m_pShader->ApplyTexture("Assets/Textures/hardwood-brown-planks-specular.tif", 1);
 	*/
 }
+
+void Mesh::SetShader(Shader* shader)
+{
+	if (shader)
+		m_pShader = shader;
+}

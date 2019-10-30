@@ -94,6 +94,9 @@ void Shader::SetData(void* data)
 {
 	m_Data = data;
 
+	if (m_Data == nullptr)
+		return;
+
 	ConstantBuffers::GetInstance()->Bind(BUFFER_SHADER_PROPERTIES, data);
 }
 

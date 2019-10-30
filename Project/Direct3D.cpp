@@ -14,6 +14,7 @@
 #include "Camera.h"
 #include "DirectionLight.h"
 #include "Scene.h"
+#include "Skybox.h"
 
 
 using namespace std::chrono;
@@ -22,6 +23,7 @@ Direct3D* Direct3D::m_pInstance = NULL;
 
 //Mesh* m;
 Scene* scene;
+Skybox* sky;
 
 Direct3D::Direct3D()
 {
@@ -159,6 +161,8 @@ HRESULT Direct3D::InitialiseD3D(HWND hWnd, HINSTANCE hInst)
 
 	Input::GetInstance()->Update();
 
+	sky = new Skybox("Assets/Skies/alps_sky.dds");
+
 	scene = Scene::LoadFromFile("Assets/Levels/Test.jscene");
 
 	return S_OK;
@@ -192,10 +196,6 @@ void Direct3D::RunUpdate()
 	g_pImmediateContext->ClearRenderTargetView(g_pBackBufferRTView, rgba_clear_colour);
 	g_pImmediateContext->ClearDepthStencilView(g_pZBuffer, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-	//transBuffer.World = XMMatrixScaling(1, 1, 1) * XMMatrixRotationRollPitchYaw(0, 0, 0) * XMMatrixTranslation(3, -1, 5);
-
-	//transBuffer.WorldViewProjection = transBuffer.World * Camera::GetViewMatrix() * Camera::GetProjectionMatrix();
-
 	if(Camera::GetMain())
 		lightBuff.CameraPosition = Camera::GetMain()->GetPosition();
 
@@ -207,6 +207,8 @@ void Direct3D::RunUpdate()
 		lightBuff.AmbientColour = DirectionLight::GetMainLight()->GetAmbientColour();
 	}
 	ConstantBuffers::GetInstance()->Bind(BUFFER_LIGHTING, &lightBuff);
+
+	sky->UpdateGfx();
 
 	scene->UpdateGfx();
 

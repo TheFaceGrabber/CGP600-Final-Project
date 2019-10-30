@@ -157,6 +157,7 @@
     <ClCompile Include="MeshRenderer.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="Skybox.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="ReqInc.hlsl">
@@ -165,6 +166,9 @@
     <FxCompile Include="BlinnPhong.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Skybox.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
   </ItemGroup>
@@ -181,6 +185,7 @@
     <ClInclude Include="MeshRenderer.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="Skybox.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Levels\Test.jscene" />
