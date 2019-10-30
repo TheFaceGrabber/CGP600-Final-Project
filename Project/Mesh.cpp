@@ -26,7 +26,7 @@ void Mesh::LoadFromFile(std::string loc)
 	std::ifstream f(loc);
 	if (!f.is_open()) 
 	{
-		throw "Model file could not be openned. Reason: Location does not exists";
+		throw "Model file could not be opened. Reason: Location does not exists";
 		return;
 	}
 
@@ -108,24 +108,37 @@ void Mesh::LoadFromFile(std::string loc)
 			}
 
 			if (p0 < 0)
-				p0 = uint32_t(ptrdiff_t(positions.size()) + p0);
+				p0 = uint32_t(ptrdiff_t(positions.size()) + n0);
 			else
 				p0 -= 1;
 			if (p1 < 0)
-				p1 = uint32_t(ptrdiff_t(positions.size()) + p1);
+				p1 = uint32_t(ptrdiff_t(positions.size()) + n1);
 			else
 				p1 -= 1;
 			if (p2 < 0)
-				p2 = uint32_t(ptrdiff_t(positions.size()) + p2);
+				p2 = uint32_t(ptrdiff_t(positions.size()) + n2);
 			else
 				p2 -= 1;
+
+			if (n0 <= 0)
+				n0 = uint32_t(ptrdiff_t(normals.size()) + n0);
+			else
+				n0 -= 1;
+			if (n1 <= 0)
+				n1 = uint32_t(ptrdiff_t(normals.size()) + n1);
+			else
+				n1 -= 1;
+			if (n2 <= 0)
+				n2 = uint32_t(ptrdiff_t(normals.size()) + n2);
+			else
+				n2 -= 1;
 
 			posIndex.push_back(p0);
 			posIndex.push_back(p1);
 			posIndex.push_back(p2);
-			nrmIndex.push_back(n0 - 1);
-			nrmIndex.push_back(n1 - 1);
-			nrmIndex.push_back(n2 - 1);
+			nrmIndex.push_back(n0);
+			nrmIndex.push_back(n1);
+			nrmIndex.push_back(n2);
 			uvIndex.push_back(t0 - 1);
 			uvIndex.push_back(t1 - 1);
 			uvIndex.push_back(t2 - 1);

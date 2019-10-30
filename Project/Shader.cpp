@@ -103,6 +103,8 @@ void Shader::Update()
 
 	SetData(data);
 
+	Direct3D::GetInstance()->GetContext()->PSSetSamplers(0, 1, &g_pDefaultSampler);
+
 	for (int i = 0; i < g_pTextures.size(); i++)
 	{
 		Direct3D::GetInstance()->GetContext()->PSSetShaderResources(i, 1, &g_pTextures[i]);

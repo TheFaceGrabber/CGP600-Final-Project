@@ -14,6 +14,7 @@
 #include "Camera.h"
 #include "DirectionLight.h"
 #include "Scene.h"
+#include "GUI.h"
 
 
 using namespace std::chrono;
@@ -33,6 +34,7 @@ Direct3D::~Direct3D()
 	delete scene;
 	ConstantBuffers::Release();
 	Input::Release();
+	GUI::Release();
 }
 
 #pragma region Initalisers
@@ -160,7 +162,6 @@ HRESULT Direct3D::InitialiseD3D(HWND hWnd, HINSTANCE hInst)
 	Input::GetInstance()->Update();
 
 	scene = Scene::LoadFromFile("Assets/Levels/Test.jscene");
-
 	return S_OK;
 }
 #pragma endregion
@@ -187,14 +188,13 @@ void Direct3D::RunUpdate()
 	m_fps = 1.0f / m_deltaTime;
 
 	scene->Update();
+	GUI::GetInstance()->DrawGUIText(std::to_string(round((1/m_deltaTime) * 2.f)/2.f), -1, 1, .1);
+	GUI::GetInstance()->DrawGUIText("30/360", -1, -.9, .1);
+	GUI::GetInstance()->DrawGUIText("100%", .6, -.9, .1);
 
 	float rgba_clear_colour[4] = { 0.4, 0.58, 0.92, 1.0f };
 	g_pImmediateContext->ClearRenderTargetView(g_pBackBufferRTView, rgba_clear_colour);
 	g_pImmediateContext->ClearDepthStencilView(g_pZBuffer, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-
-	//transBuffer.World = XMMatrixScaling(1, 1, 1) * XMMatrixRotationRollPitchYaw(0, 0, 0) * XMMatrixTranslation(3, -1, 5);
-
-	//transBuffer.WorldViewProjection = transBuffer.World * Camera::GetViewMatrix() * Camera::GetProjectionMatrix();
 
 	if(Camera::GetMain())
 		lightBuff.CameraPosition = Camera::GetMain()->GetPosition();
@@ -209,6 +209,7 @@ void Direct3D::RunUpdate()
 	ConstantBuffers::GetInstance()->Bind(BUFFER_LIGHTING, &lightBuff);
 
 	scene->UpdateGfx();
+	GUI::GetInstance()->UpdateGfx();
 
 	//ConstantBuffers::GetInstance()->Bind(BUFFER_TRANSFORMATIONS, &transBuffer);
 
