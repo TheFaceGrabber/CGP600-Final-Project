@@ -40,4 +40,5 @@ public:
 	void Draw();
 	void UpdateMaterial(string materialLoc);
 	void ApplyMesh();
+	void SetShader(Shader* shader);
 };

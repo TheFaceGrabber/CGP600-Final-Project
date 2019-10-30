@@ -14,6 +14,7 @@
 #include "Camera.h"
 #include "DirectionLight.h"
 #include "Scene.h"
+#include "Skybox.h"
 #include "GUI.h"
 
 
@@ -23,6 +24,7 @@ Direct3D* Direct3D::m_pInstance = NULL;
 
 //Mesh* m;
 Scene* scene;
+Skybox* sky;
 
 Direct3D::Direct3D()
 {
@@ -161,6 +163,8 @@ HRESULT Direct3D::InitialiseD3D(HWND hWnd, HINSTANCE hInst)
 
 	Input::GetInstance()->Update();
 
+	sky = new Skybox("Assets/Skies/alps_sky.dds");
+
 	scene = Scene::LoadFromFile("Assets/Levels/Test.jscene");
 	return S_OK;
 }
@@ -207,6 +211,8 @@ void Direct3D::RunUpdate()
 		lightBuff.AmbientColour = DirectionLight::GetMainLight()->GetAmbientColour();
 	}
 	ConstantBuffers::GetInstance()->Bind(BUFFER_LIGHTING, &lightBuff);
+
+	sky->UpdateGfx();
 
 	scene->UpdateGfx();
 	GUI::GetInstance()->UpdateGfx();

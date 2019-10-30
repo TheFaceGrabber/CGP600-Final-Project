@@ -3,6 +3,7 @@
   <ItemGroup>
     <FxCompile Include="ReqInc.hlsl" />
     <FxCompile Include="BlinnPhong.hlsl" />
+    <FxCompile Include="Skybox.hlsl" />
     <FxCompile Include="text2D_shaders.hlsl" />
   </ItemGroup>
   <ItemGroup>
@@ -41,6 +42,9 @@
       <Filter>World\Gameplay\Components</Filter>
     </ClCompile>
     <ClCompile Include="Shader.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Skybox.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="GUI.cpp" />
@@ -83,6 +87,9 @@
       <Filter>World\Gameplay\Components</Filter>
     </ClInclude>
     <ClInclude Include="Shader.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Skybox.h">
       <Filter>Graphics</Filter>
     </ClInclude>
     <ClInclude Include="GUI.h" />

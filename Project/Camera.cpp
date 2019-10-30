@@ -16,6 +16,11 @@ float Camera::GetFov()
 	return m_fov;
 }
 
+float Camera::GetFarPlane()
+{
+	return m_farPlane;
+}
+
 void Camera::SetMain(GameObject* cam)
 {
 	if (m_pMain == nullptr)

@@ -11,6 +11,7 @@ private:
 public:
 	static GameObject* GetMain();
 	static float GetFov();
+	static float GetFarPlane();
 	static void SetMain(GameObject* cam);
 	static void SetFov(float fov);
 	static XMMATRIX GetViewMatrix();
