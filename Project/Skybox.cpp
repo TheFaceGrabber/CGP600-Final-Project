@@ -3,7 +3,7 @@
 #include "ConstantBuffers.h"
 #include "Camera.h"
 
-Skybox::Skybox(std::string skyboxLoc)
+Skybox::Skybox(std::string skyboxMaterial)
 {
 	D3D11_DEPTH_STENCIL_DESC desc;
 	ZeroMemory(&desc, sizeof(desc));
@@ -15,8 +15,7 @@ Skybox::Skybox(std::string skyboxLoc)
 	desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
 	Direct3D::GetInstance()->GetDevice()->CreateDepthStencilState(&desc, &m_pSkyboxDepth);
 
-	m_pShader = new Shader("Skybox.hlsl");
-	m_pShader->ApplyTexture(skyboxLoc, 0);
+	m_pShader = Shader::LoadFromMaterial(skyboxMaterial);
 
 	m_pSkyMesh = new Mesh();
 	m_pSkyMesh->LoadFromFile(m_meshLoc);

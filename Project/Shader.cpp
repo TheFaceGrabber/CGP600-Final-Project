@@ -71,7 +71,6 @@ Shader::~Shader()
 
 	g_pTextures.clear();
 	m_matProperties.clear();
-	delete m_Data;
 }
 
 void Shader::ApplyTexture(std::string textureLocation, int index)

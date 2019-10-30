@@ -164,7 +164,7 @@ HRESULT Direct3D::InitialiseD3D(HWND hWnd, HINSTANCE hInst)
 
 	Input::GetInstance()->Update();
 
-	sky = new Skybox("Assets/Skies/alps_sky.dds");
+	sky = new Skybox("Assets/Materials/AlpsSky.jmtl");
 
 	scene = Scene::LoadFromFile("Assets/Levels/Test.jscene");
 	return S_OK;

@@ -1,4 +1,11 @@
 #include "ReqInc.hlsl"
+cbuffer Properties : register(b2)
+{
+    float SunSize;
+    float SunStrength;
+    float2 Padding;
+};
+
 TextureCube SkyTex : register(t0);
 sampler Sampler : register(s0);
 
@@ -45,7 +52,7 @@ float4 frag(VOut i) : SV_TARGET
 
 	finalCol = SkyTex.Sample(Sampler, i.uv);
 
-	float4 sun = min(pow(max(0, dot(v, lightDir)), 500), 1) * 2 * LightColour;
+    float4 sun = min(pow(max(0, dot(v, lightDir)), SunSize), 1) * SunStrength * LightColour;
 
 	return sun + finalCol;
 }

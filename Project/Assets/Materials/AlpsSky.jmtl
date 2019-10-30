@@ -1,0 +1,8 @@
+shader Skybox
+
+property 200
+property 2
+property 1
+property 1
+
+texture Assets\Skies\alps_sky.dds

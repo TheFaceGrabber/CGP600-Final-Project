@@ -13,7 +13,7 @@ private:
 	Shader* m_pShader;
 
 public:
-	Skybox(std::string skyboxLoc);
+	Skybox(std::string skyboxMaterial);
 	~Skybox();
 
 	void UpdateGfx();
