@@ -34,14 +34,6 @@ VOut vert(VIn v)
 	return output;
 }
 
-float Sun(float3 sunDir, float3 skyPos)
-{
-	float3 diff = sunDir - skyPos;
-	float dist = length(diff);
-	float spot = 1 - smoothstep(0, 1, dist);
-	return 1 - pow(0.125, spot);
-}
-
 float4 frag(VOut i) : SV_TARGET
 {
     float4 finalCol;

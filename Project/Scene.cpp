@@ -20,6 +20,8 @@ Scene::~Scene()
 	}
 
 	m_vGameObjects.resize(0);
+
+	delete m_pSky;
 }
 
 Scene* Scene::LoadFromFile(std::string file)
@@ -48,7 +50,7 @@ Scene* Scene::LoadFromFile(std::string file)
 
 		std::strstream s;
 		s << line;
-		if(fileCurSection.empty())
+		if (fileCurSection.empty())
 			s >> fileCurSection;
 
 		std::string caption;
@@ -56,15 +58,15 @@ Scene* Scene::LoadFromFile(std::string file)
 
 		if (caption == "End")
 			fileCurSection = "";
-		else if(fileCurSection == "Sun")
+		else if (fileCurSection == "Sun")
 		{
-			if(caption.empty())
+			if (caption.empty())
 			{
 				sunObj = new GameObject("Sun");
 				sun = (DirectionLight*)sunObj->AddComponent(new DirectionLight());
 				scene->RegisterGameObject(sunObj);
 			}
-			else if(caption == "Rotation")
+			else if (caption == "Rotation")
 			{
 				float x, y, z;
 				s >> x >> y >> z;
@@ -78,9 +80,9 @@ Scene* Scene::LoadFromFile(std::string file)
 			}
 			else if (caption == "Colour")
 			{
-				float r,g,b;
+				float r, g, b;
 				s >> r >> g >> b;
-				sun->SetColour({r,g,b,1});
+				sun->SetColour({ r,g,b,1 });
 			}
 			else if (caption == "Ambient")
 			{
@@ -89,7 +91,7 @@ Scene* Scene::LoadFromFile(std::string file)
 				sun->SetAmbientColour({ r,g,b,1 });
 			}
 		}
-		else if(fileCurSection == "Player")
+		else if (fileCurSection == "Player")
 		{
 			if (caption.empty())
 			{
@@ -110,7 +112,7 @@ Scene* Scene::LoadFromFile(std::string file)
 				playerObj->SetPosition({ x,y,z });
 			}
 		}
-		else if(fileCurSection == "Entity")
+		else if (fileCurSection == "Entity")
 		{
 			if (caption.empty())
 			{
@@ -118,21 +120,21 @@ Scene* Scene::LoadFromFile(std::string file)
 				ent->SetPosition({ 0, 0, 0 });
 				scene->RegisterGameObject(ent);
 			}
-			else if(caption == "Name")
+			else if (caption == "Name")
 			{
 				std::string name;
 				s >> name;
 				int last = scene->m_vGameObjects.size() - 1;
 				scene->m_vGameObjects[last]->SetName(name);
 			}
-			else if(caption == "Position")
+			else if (caption == "Position")
 			{
 				float x, y, z;
 				s >> x >> y >> z;
 				int last = scene->m_vGameObjects.size() - 1;
 				scene->m_vGameObjects[last]->SetPosition({ x,y,z });
 			}
-			else if(caption == "Rotation")
+			else if (caption == "Rotation")
 			{
 				float x, y, z;
 				s >> x >> y >> z;
@@ -146,11 +148,11 @@ Scene* Scene::LoadFromFile(std::string file)
 				int last = scene->m_vGameObjects.size() - 1;
 				scene->m_vGameObjects[last]->SetScale({ x,y,z });
 			}
-			else if(caption == "Component")
+			else if (caption == "Component")
 			{
 				std::string comp;
 				s >> comp;
-				if(comp == "MeshRenderer")
+				if (comp == "MeshRenderer")
 				{
 					std::string mesh;
 					std::string mat;
@@ -162,6 +164,15 @@ Scene* Scene::LoadFromFile(std::string file)
 					m->UpdateMaterial(mat);
 					r->SetMesh(m);
 				}
+			}
+		}
+		else if (fileCurSection == "Skybox")
+		{
+			if (caption == "Material")
+			{
+				std::string comp;
+				s >> comp;
+				scene->SetSky(comp);
 			}
 		}
 	}
@@ -202,6 +213,9 @@ void Scene::Update()
 
 void Scene::UpdateGfx()
 {
+	if(m_pSky)
+		m_pSky->UpdateGfx();
+
 	for (int i = 0; i < m_vGameObjects.size(); i++)
 	{
 		m_vGameObjects[i]->UpdateGfx();
@@ -211,5 +225,10 @@ void Scene::UpdateGfx()
 void Scene::Unload()
 {
 	//Tell scene manager I am unloading and then "delete this"
+}
+
+void Scene::SetSky(string material)
+{
+	m_pSky = new Skybox(material);
 }
 
