@@ -34,6 +34,7 @@ Direct3D::~Direct3D()
 {
 	//delete m;
 	delete scene;
+	delete sky;
 	ConstantBuffers::Release();
 	Input::Release();
 	GUI::Release();

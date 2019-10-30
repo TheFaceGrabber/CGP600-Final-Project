@@ -33,9 +33,6 @@ Skybox::~Skybox()
 
 	if (m_pDefaultDepth)
 		m_pDefaultDepth->Release();
-
-	if (m_pShader)
-		delete m_pShader;
 }
 
 void Skybox::UpdateGfx()
