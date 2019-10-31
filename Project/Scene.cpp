@@ -202,17 +202,17 @@ void Scene::ParseLevelGrid(Scene* scene, map<char, Block> blocks, vector<string>
 
 Scene* Scene::LoadFromFile(std::string file)
 {
-	Scene* scene = new Scene();
-
-	map<char, Block> blocksDictionary;
-	vector<string> gridLines;
-
 	std::ifstream f(file);
 	if (!f.is_open())
 	{
 		throw "Model file could not be openned. Reason: Location does not exists";
 		return nullptr;
 	}
+
+	Scene* scene = new Scene();
+
+	map<char, Block> blocksDictionary;
+	vector<string> gridLines;
 
 	std::string fileCurSection = "";
 
