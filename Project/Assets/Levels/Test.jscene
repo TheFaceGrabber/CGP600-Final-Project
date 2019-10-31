@@ -14,28 +14,37 @@ Skybox
 Material Assets/Materials/AlpsSky.jmtl
 End
 
-~Key Height Material
 Blocks
-# 1 Assets/Materials/Tiles.jmtl
-- 0 Assets/Materials/Hardwood_Floor.jmtl
+Block @ .5 Assets/Materials/Bricks.jmtl 2
+Block # 1 Assets/Materials/Bricks.jmtl 2
+Block - 0 Assets/Materials/Terracota_Tiles.jmtl 1
 End
 
 Grid
 #############
-###-------###
-###-#####-###
+#############
+####@@@@@####
+####-----####
+#--------####
+#-##-----####
+#-####-#-####
+#----#-#----#
+#-####-####-#
+#-#-------#-#
+#-#-#####-#-#
 #-----#-----#
 #-----#-----#
+#@-@@@#@@-@@#
 #############
 End
 
-Entity
-Name Floor
-Position 0 -2 0
-Rotation 0 0 0
-Component MeshRenderer Assets\Models\Floor.obj Assets\Materials\Bricks.jmtl
-End
-
+~Entity
+~Name Floor
+~Position 0 -2 0
+~Rotation 0 0 0
+~Component MeshRenderer Assets\Models\Floor.obj Assets\Materials\Bricks.jmtl
+~End
+~
 ~Entity
 ~Name Evil-Pigeon-1
 ~Position -2 0 3 

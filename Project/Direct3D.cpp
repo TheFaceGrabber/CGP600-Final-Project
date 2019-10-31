@@ -178,7 +178,7 @@ void Direct3D::RunUpdate()
 	LightingBuffer lightBuff;
 	TransformationBuffer transBuffer;
 
-	Sleep(16.6);
+	Sleep(1);
 	double t = (double)duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count() / 1000.0f;
 
 	double diff = t - m_lastTimeSample;
@@ -189,7 +189,7 @@ void Direct3D::RunUpdate()
 	m_fps = 1.0f / m_deltaTime;
 
 	scene->Update();
-	GUI::GetInstance()->DrawGUIText(std::to_string(round((1/m_deltaTime) * 2.f)/2.f), -1, 1, .1);
+	GUI::GetInstance()->DrawGUIText(std::to_string(round((1/m_deltaTime) * 2.f)/2.f), -1, 1, .05);
 	GUI::GetInstance()->DrawGUIText("30/360", -1, -.9, .1);
 	GUI::GetInstance()->DrawGUIText("100%", .6, -.9, .1);
 

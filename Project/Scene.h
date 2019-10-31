@@ -1,7 +1,16 @@
 #pragma once
 #include <vector>
+#include <map>
 #include "GameObject.h"
 #include "Skybox.h"
+
+struct Block
+{
+public:
+	float Height;
+	string Material;
+	float TileAmount;
+};
 
 class Scene
 {
@@ -9,6 +18,9 @@ private:
 	std::vector<GameObject*> m_vGameObjects;
 	std::string fileLocation;
 	Skybox* m_pSky;
+
+	static void ParseLevelGrid(Scene* scene, map<char, Block> blocks, vector<string> grid);
+
 public:
 	static Scene* LoadFromFile(std::string file);
 

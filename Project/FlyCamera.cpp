@@ -14,6 +14,7 @@ void FlyCamera::Start()
 
 void FlyCamera::Update()
 {
+	int moveSpeed = 10;
 	XMFLOAT2 mouse = Input::GetInstance()->GetMouseDelta();
 
 	mouse.x *= m_mouseSens;
@@ -26,7 +27,7 @@ void FlyCamera::Update()
 
 	XMFLOAT3 newPos = m_owner->GetPosition();
 
-	if(Input::GetInstance()->IsMouseButtonPressed(1))
+	if (Input::GetInstance()->IsMouseButtonPressed(1))
 	{
 		Camera::SetFov(15);
 	}
@@ -38,18 +39,18 @@ void FlyCamera::Update()
 	if (Input::GetInstance()->IsKeyPressed(DIK_W))
 	{
 		XMFLOAT3 forward = m_owner->GetForward();
-		newPos.x += forward.x * 0.25;
-		newPos.y += forward.y * 0.25;
-		newPos.z += forward.z * 0.25;
+		newPos.x += forward.x * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();
+		newPos.y += forward.y * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();
+		newPos.z += forward.z * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();
 
 		m_owner->SetPosition(newPos);
 	}
 	if (Input::GetInstance()->IsKeyPressed(DIK_S))
 	{
 		XMFLOAT3 forward = m_owner->GetForward();
-		newPos.x -= forward.x * 0.25;
-		newPos.y -= forward.y * 0.25;
-		newPos.z -= forward.z * 0.25;
+		newPos.x -= forward.x * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();
+		newPos.y -= forward.y * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();
+		newPos.z -= forward.z * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();
 
 		m_owner->SetPosition(newPos);
 	}
@@ -57,18 +58,18 @@ void FlyCamera::Update()
 	if (Input::GetInstance()->IsKeyPressed(DIK_D))
 	{
 		XMFLOAT3 right = m_owner->GetRight();
-		newPos.x += right.x * 0.25;
-		newPos.y += right.y * 0.25;
-		newPos.z += right.z * 0.25;
+		newPos.x += right.x * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();;
+		newPos.y += right.y * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();;
+		newPos.z += right.z * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();;
 
 		m_owner->SetPosition(newPos);
 	}
 	if (Input::GetInstance()->IsKeyPressed(DIK_A))
 	{
 		XMFLOAT3 right = m_owner->GetRight();
-		newPos.x -= right.x * 0.25;
-		newPos.y -= right.y * 0.25;
-		newPos.z -= right.z * 0.25;
+		newPos.x -= right.x * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();;
+		newPos.y -= right.y * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();;
+		newPos.z -= right.z * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();;
 
 		m_owner->SetPosition(newPos);
 	}

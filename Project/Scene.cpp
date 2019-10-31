@@ -24,9 +24,188 @@ Scene::~Scene()
 	delete m_pSky;
 }
 
+void Scene::ParseLevelGrid(Scene* scene, map<char, Block> blocks, vector<string> grid)
+{
+	map<char, vector<DefaultVertex>> meshVerts;
+
+	GameObject* level = new GameObject("Level Grid");
+	const int scale = 5;
+	level->SetScale({ scale,scale,scale });
+
+	for (auto& pair : blocks)
+	{
+		meshVerts.emplace(pair.first, vector<DefaultVertex>());
+	}
+
+	for (int y = grid.size() - 1; y > 0; y--)
+	{
+		for (int x = 0; x < grid[y].length(); x++)
+		{
+			float xf, yf;
+			xf = (float)x;
+			yf = (float)y;
+			char curChar = grid[y][x];
+			Block block = blocks[curChar];
+			//Create top
+			{
+				DefaultVertex tl;
+				tl.Pos = { xf - .5f, block.Height, yf + .5f };
+				tl.Norm = { 0,1,0 };
+				tl.UV = { 0, 1- block.TileAmount };
+				DefaultVertex bl;
+				bl.Pos = { xf - .5f, block.Height, yf - .5f };
+				bl.Norm = { 0,1,0 };
+				bl.UV = { 0, 1 - 0};
+				DefaultVertex tr;
+				tr.Pos = { xf + .5f, block.Height, yf + .5f };
+				tr.Norm = { 0,1,0 };
+				tr.UV = { block.TileAmount, 1 - block.TileAmount };
+				DefaultVertex br;
+				br.Pos = { xf + .5f, block.Height, yf - .5f };
+				br.Norm = { 0,1,0 };
+				br.UV = { block.TileAmount, 1 - 0};
+
+				meshVerts[curChar].push_back(bl);
+				meshVerts[curChar].push_back(tl);
+				meshVerts[curChar].push_back(tr);
+
+				meshVerts[curChar].push_back(br);
+				meshVerts[curChar].push_back(bl);
+				meshVerts[curChar].push_back(tr);
+			}
+			//Create east/right
+			if (x != grid[x].size() - 1 && blocks[grid[y][x + 1]].Height < block.Height)
+			{
+				DefaultVertex tl;
+				tl.Pos = { xf + .5f, block.Height, yf - .5f };
+				tl.Norm = { 1,0,0 };
+				tl.UV = { 0, 1 - block.TileAmount * block.Height };
+				DefaultVertex bl;
+				bl.Pos = { xf + .5f, 0, yf - .5f };
+				bl.Norm = { 1,0,0 };
+				bl.UV = { 0, 1 - 0 };
+				DefaultVertex tr;
+				tr.Pos = { xf + .5f, block.Height, yf + .5f };
+				tr.Norm = { 1,0,0 };
+				tr.UV = { block.TileAmount,1 - block.TileAmount * block.Height };
+				DefaultVertex br;
+				br.Pos = { xf + .5f, 0, yf + .5f };
+				br.Norm = { 1,0,0 };
+				br.UV = { block.TileAmount, 1 - 0 };
+
+				meshVerts[curChar].push_back(bl);
+				meshVerts[curChar].push_back(tl);
+				meshVerts[curChar].push_back(tr);
+
+				meshVerts[curChar].push_back(br);
+				meshVerts[curChar].push_back(bl);
+				meshVerts[curChar].push_back(tr);
+			}
+			//Create west/left
+			if (x != 0 && blocks[grid[y][x - 1]].Height < block.Height)
+			{
+				DefaultVertex tl;
+				tl.Pos = { xf - .5f, block.Height, yf - .5f };
+				tl.Norm = { -1,0,0 };
+				tl.UV = { 0, 1 - block.TileAmount * block.Height };
+				DefaultVertex bl;
+				bl.Pos = { xf - .5f, 0, yf - .5f };
+				bl.Norm = { -1,0,0 };
+				bl.UV = { 0, 1 - 0 };
+				DefaultVertex tr;
+				tr.Pos = { xf - .5f, block.Height, yf + .5f };
+				tr.Norm = { -1,0,0 };
+				tr.UV = { block.TileAmount, 1 - block.TileAmount * block.Height };
+				DefaultVertex br;
+				br.Pos = { xf - .5f, 0, yf + .5f };
+				br.Norm = { -1,0,0 };
+				br.UV = { block.TileAmount,1 - 0 };
+
+				meshVerts[curChar].push_back(tr);
+				meshVerts[curChar].push_back(tl);
+				meshVerts[curChar].push_back(bl);
+
+				meshVerts[curChar].push_back(tr);
+				meshVerts[curChar].push_back(bl);
+				meshVerts[curChar].push_back(br);
+			}
+			//Create north
+			if (y != grid.size() - 1 && blocks[grid[y + 1][x]].Height < block.Height)
+			{
+				DefaultVertex tl;
+				tl.Pos = { xf - .5f, block.Height, yf + .5f };
+				tl.Norm = { 0,0,1 };
+				tl.UV = { 0, 1 - block.TileAmount * block.Height };
+				DefaultVertex bl;
+				bl.Pos = { xf - .5f, 0, yf + .5f };
+				bl.Norm = { 0,0,1 };
+				bl.UV = { 0, 1 - 0 };
+				DefaultVertex tr;
+				tr.Pos = { xf + .5f, block.Height, yf + .5f };
+				tr.Norm = { 0,0,1 };
+				tr.UV = { block.TileAmount,1 - block.TileAmount * block.Height };
+				DefaultVertex br;
+				br.Pos = { xf + .5f, 0, yf + .5f };
+				br.Norm = { 0,0,1 };
+				br.UV = { block.TileAmount,1 - 0 };
+
+				meshVerts[curChar].push_back(tr);
+				meshVerts[curChar].push_back(tl);
+				meshVerts[curChar].push_back(bl);
+
+				meshVerts[curChar].push_back(tr);
+				meshVerts[curChar].push_back(bl);
+				meshVerts[curChar].push_back(br);
+			}
+			//Create south
+			if (y != 0 && blocks[grid[y - 1][x]].Height < block.Height)
+			{
+				DefaultVertex tl;
+				tl.Pos = { xf - .5f, block.Height, yf - .5f };
+				tl.Norm = { 0,0,-1 };
+				tl.UV = { 0, 1 - block.TileAmount * block.Height };
+				DefaultVertex bl;
+				bl.Pos = { xf - .5f, 0, yf - .5f };
+				bl.Norm = { 0,0,-1 };
+				bl.UV = { 0, 1 - 0 };
+				DefaultVertex tr;
+				tr.Pos = { xf + .5f, block.Height, yf - .5f };
+				tr.Norm = { 0,0,-1 };
+				tr.UV = { block.TileAmount, 1 - block.TileAmount * block.Height };
+				DefaultVertex br;
+				br.Pos = { xf + .5f, 0, yf - .5f };
+				br.Norm = { 0,0,-1 };
+				br.UV = { block.TileAmount, 1 - 0 };
+
+				meshVerts[curChar].push_back(bl);
+				meshVerts[curChar].push_back(tl);
+				meshVerts[curChar].push_back(tr);
+
+				meshVerts[curChar].push_back(br);
+				meshVerts[curChar].push_back(bl);
+				meshVerts[curChar].push_back(tr);
+			}
+		}
+	}
+
+	for (auto& pair : meshVerts)
+	{
+		Mesh* mesh = new Mesh();
+		mesh->ApplyVertices(pair.second, true);
+		mesh->SetShader(Shader::LoadFromMaterial(blocks[pair.first].Material));
+		MeshRenderer* r = (MeshRenderer*)level->AddComponent(new MeshRenderer());
+		r->SetMesh(mesh);
+	}
+
+	scene->RegisterGameObject(level);
+}
+
 Scene* Scene::LoadFromFile(std::string file)
 {
 	Scene* scene = new Scene();
+
+	map<char, Block> blocksDictionary;
+	vector<string> gridLines;
 
 	std::ifstream f(file);
 	if (!f.is_open())
@@ -175,7 +354,30 @@ Scene* Scene::LoadFromFile(std::string file)
 				scene->SetSky(comp);
 			}
 		}
+		else if (fileCurSection == "Blocks")
+		{
+			if (caption == "Block") 
+			{
+				char key;
+				float height = 0;
+				float tile;
+				string mat;
+				s >> key >> height >> mat >> tile;
+				Block b;
+				b.TileAmount = tile;
+				b.Height = height;
+				b.Material = mat;
+				blocksDictionary.emplace(key, b);
+			}
+		}
+		else if (fileCurSection == "Grid")
+		{
+			if(!caption.empty())
+				gridLines.push_back(caption);
+		}
 	}
+	
+	ParseLevelGrid(scene, blocksDictionary, gridLines);
 
 	return scene;
 	//Parse jlvl file and apply to new scene object
