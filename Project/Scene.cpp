@@ -205,7 +205,7 @@ Scene* Scene::LoadFromFile(std::string file)
 	std::ifstream f(file);
 	if (!f.is_open())
 	{
-		throw "Model file could not be openned. Reason: Location does not exists";
+		throw exception("Scene file could not be opened. Reason: Location does not exists");
 		return nullptr;
 	}
 

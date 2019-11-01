@@ -1,0 +1,11 @@
+shader BlinnPhong
+
+property 1
+property 1
+property 1
+property 1
+property 1
+
+texture Assets\Textures\floor.png
+texture Assets\Textures\floor_spc.tif
+texture Assets\Textures\floor_nrml.png

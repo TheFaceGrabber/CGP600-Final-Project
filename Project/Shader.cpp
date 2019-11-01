@@ -34,12 +34,13 @@ Shader::Shader(std::string shaderFilePath)
 	D3D11_INPUT_ELEMENT_DESC iedesc[] =
 	{
 		//Be very careful setting the correct dxgi format and D3D version
-		{"POSITION",	0, DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0},
-		{"NORMAL",		0,	DXGI_FORMAT_R32G32B32_FLOAT,0,D3D11_APPEND_ALIGNED_ELEMENT,D3D11_INPUT_PER_VERTEX_DATA,0},
-		{"TEXCOORD",	0,	DXGI_FORMAT_R32G32_FLOAT,0,D3D11_APPEND_ALIGNED_ELEMENT,D3D11_INPUT_PER_VERTEX_DATA,0},
+		{"POSITION",	0,	DXGI_FORMAT_R32G32B32_FLOAT,0,0,							D3D11_INPUT_PER_VERTEX_DATA,0},
+		{"NORMAL",		0,	DXGI_FORMAT_R32G32B32_FLOAT,0,D3D11_APPEND_ALIGNED_ELEMENT,	D3D11_INPUT_PER_VERTEX_DATA,0},
+		{"TEXCOORD",	0,	DXGI_FORMAT_R32G32_FLOAT,	0,D3D11_APPEND_ALIGNED_ELEMENT,	D3D11_INPUT_PER_VERTEX_DATA,0},
+		{"TANGENT",		0,	DXGI_FORMAT_R32G32B32_FLOAT,0,D3D11_APPEND_ALIGNED_ELEMENT,	D3D11_INPUT_PER_VERTEX_DATA,0}
 	};
 
-	Direct3D::GetInstance()->GetDevice()->CreateInputLayout(iedesc, 3, VS->GetBufferPointer(), VS->GetBufferSize(), &g_pInputLayout);
+	Direct3D::GetInstance()->GetDevice()->CreateInputLayout(iedesc, 4, VS->GetBufferPointer(), VS->GetBufferSize(), &g_pInputLayout);
 #pragma endregion 
 #pragma region Init Default Sampler
 	D3D11_SAMPLER_DESC sampler_desc;

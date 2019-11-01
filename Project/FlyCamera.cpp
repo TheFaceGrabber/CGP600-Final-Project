@@ -4,6 +4,7 @@
 #include "Direct3D.h"
 #include <xnamath.h>
 #include "Camera.h"
+#include "DirectionLight.h"
 
 void FlyCamera::Start()
 {

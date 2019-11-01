@@ -15,6 +15,7 @@ struct DefaultVertex
 	XMFLOAT3	Pos;
 	XMFLOAT3	Norm;
 	XMFLOAT2	UV;
+	XMFLOAT3	Tan;
 };
 
 class Mesh

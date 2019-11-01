@@ -18,6 +18,11 @@ cbuffer CBuffer1 : register(b1)
 //0.22  0 - 1
 //51    0 -255
 
+float3 FixNormal(float4 packednormal)
+{
+    return packednormal * 2 - 1;
+}
+
 float4 LocalToWorld(float4 localPosition)
 {
     return mul(World, localPosition);

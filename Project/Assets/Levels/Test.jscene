@@ -6,8 +6,8 @@ Intensity 1.6
 End
 
 Player
-Position 0 0 0 
-Rotation 0 90 0
+Position 30 2 15 
+Rotation 0 0 0
 End
 
 Skybox
@@ -17,7 +17,7 @@ End
 Blocks
 Block @ .5 Assets/Materials/Bricks.jmtl 2
 Block # 1 Assets/Materials/Bricks.jmtl 2
-Block - 0 Assets/Materials/Terracota_Tiles.jmtl 1
+Block - 0 Assets/Materials/Floor.jmtl 1
 End
 
 Grid

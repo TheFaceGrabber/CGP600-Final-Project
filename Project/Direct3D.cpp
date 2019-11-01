@@ -54,7 +54,7 @@ HRESULT Direct3D::InitialiseD3D(HWND hWnd, HINSTANCE hInst)
 	UINT createDeviceFlags = 0;
 
 #ifdef _DEBUG
-	//createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+	createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
 
 	D3D_DRIVER_TYPE driverTypes[] =
@@ -211,25 +211,6 @@ void Direct3D::RunUpdate()
 
 	scene->UpdateGfx();
 	GUI::GetInstance()->UpdateGfx();
-
-	//ConstantBuffers::GetInstance()->Bind(BUFFER_TRANSFORMATIONS, &transBuffer);
-
-	/*if(!m)
-	{
-		m = new Mesh();
-		m->LoadFromFile("Assets/Models/Sphere.obj");
-	}
-
-	m->Draw();
-
-	transBuffer.World = XMMatrixScaling(1, 1, 1) * XMMatrixRotationRollPitchYaw(0, 0, 0) * XMMatrixTranslation(-3, -1, 5);
-
-	transBuffer.WorldViewProjection = transBuffer.World * Camera::GetViewMatrix() * Camera::GetProjectionMatrix();
-
-	ConstantBuffers::GetInstance()->Bind(BUFFER_TRANSFORMATIONS, &transBuffer);
-
-	m->Draw();
-	*/
 
 	g_pSwapChain->Present(0, 0);
 }

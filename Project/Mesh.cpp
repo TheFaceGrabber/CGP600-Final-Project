@@ -1,5 +1,8 @@
 #include "Mesh.h"
 #include "Direct3D.h"
+#define _XM_NO_INTRINSICS_
+#define XM_NO_ALIGNMENT
+#include <xnamath.h>
 #include <fstream>
 #include <strstream>
 
@@ -166,7 +169,72 @@ void Mesh::LoadFromFile(std::string loc)
 		verts.push_back(vert);
 	}
 
+	XMVECTOR*tan1 = new XMVECTOR[verts.size() * 2];
+	ZeroMemory(tan1, verts.size() * 2 * sizeof(XMVECTOR));
+
+	for (int i = 0; i < posIndex.size(); i+=3)
+	{
+		int i1 = posIndex[i];
+		int i2 = posIndex[i + 1];
+		int i3 = posIndex[i + 2];
+
+		int v1 = posIndex[i1];
+		int v2 = posIndex[i2];
+		int v3 = posIndex[i3];
+		int u1 = uvIndex[i1];
+		int u2 = uvIndex[i2];
+		int u3 = uvIndex[i3];
+		XMFLOAT3 p1 = positions[v1];
+		XMFLOAT3 p2 = positions[v2];
+		XMFLOAT3 p3 = positions[v3];
+
+		XMFLOAT2 w1 = uvs[u1];
+		XMFLOAT2 w2 = uvs[u2];
+		XMFLOAT2 w3 = uvs[u3];
+
+		float x1 = p2.x - p1.x;
+		float x2 = p3.x - p1.x;
+		float y1 = p2.y - p1.y;
+		float y2 = p3.y - p1.y;
+		float z1 = p2.z - p1.z;
+		float z2 = p3.z - p1.z;
+
+		float s1 = w2.x - w1.x;
+		float s2 = w3.x - w1.x;
+		float t1 = w2.y - w1.y;
+		float t2 = w3.y - w1.y;
+
+		float r = 0;
+
+		float div = (s1 * t2 - s2 * t1);
+		if(div != 0)
+			r = 1.0F / div;
+
+		XMVECTOR sdir = XMLoadFloat3(&XMFLOAT3((t2 * x1 - t1 * x2) * r, (t2 * y1 - t1 * y2) * r,
+			(t2 * z1 - t1 * z2) * r));
+		//XMVECTOR tdir = XMLoadFloat3(&XMFLOAT3((sx1 * x2 - sx2 * x1) * r, (sx1 * y2 - sx2 * y1) * r,
+		//	(sx1 * z2 - sx2 * z1) * r));
+
+		tan1[i] = XMVectorAdd(tan1[i],sdir);
+		tan1[i + 1] = XMVectorAdd(tan1[i+1], sdir);
+		tan1[i + 2] = XMVectorAdd(tan1[i+2], sdir);
+	}
+
+	for (int i = 0; i < verts.size(); i++)
+	{
+		XMVECTOR n = XMLoadFloat3(&verts[i].Norm);
+		XMVECTOR t = tan1[i];
+		float dot = XMVectorGetX(XMVector3Dot(n, t));
+		XMVECTOR tan = XMVectorSubtract(t, XMVectorScale(n, dot));
+		tan = XMVector3Normalize(tan);
+		XMFLOAT3 finalTan;
+		XMStoreFloat3(&finalTan, tan);
+		verts[i].Tan = finalTan;
+	}
+
 	ApplyVertices(verts, true);
+
+	delete[] tan1;
 }
 
 void Mesh::ApplyVertices(vector<DefaultVertex> verts, bool applyMesh)
