@@ -4,6 +4,8 @@
 
 #include "Mesh.h"
 
+class Scene;
+
 class Direct3D
 {
 private:
@@ -26,36 +28,42 @@ private:
 	int						m_screen_height;
 
 	static Direct3D*		m_pInstance;
-	HWND m_hWnd;
-	HINSTANCE m_hInst;
+	HWND					m_hWnd;
+	HINSTANCE				m_hInst;
+
+	Scene*					m_pScene;
 
 public:
 	Direct3D();
 	~Direct3D();
 
-	static Direct3D* GetInstance();
-	static void Release(){delete m_pInstance;}
+	static Direct3D*		GetInstance();
+	static void				Release(){delete m_pInstance;}
 
-	HRESULT		InitialiseD3D(HWND hWnd, HINSTANCE hInst);
+	HRESULT					InitialiseD3D(HWND hWnd, HINSTANCE hInst);
 
-	HINSTANCE	GetHInstance() { return m_hInst; }
-	HWND		GetHWindow() { return m_hWnd; }
+	HINSTANCE				GetHInstance() { return m_hInst; }
+	HWND					GetHWindow() { return m_hWnd; }
 
-	void	Draw(Mesh* mesh);
+	void					Draw(Mesh* mesh);
 
-	int		GetScreenWidth() { return m_screen_width; }
-	int		GetScreenHeight() { return m_screen_height; }
+	int						GetScreenWidth() { return m_screen_width; }
+	int						GetScreenHeight() { return m_screen_height; }
 
-	float	GetAspectRatio() { return (float)m_screen_width / (float)m_screen_height; }
+	float					GetAspectRatio() { return (float)m_screen_width / (float)m_screen_height; }
 
-	float	GetDeltaTime() { return m_deltaTime; }
-	float	GetTime() { return m_time; }
+	float					GetDeltaTime() { return m_deltaTime; }
+	float					GetTime() { return m_time; }
 
-	void	ReleaseD3D();
-	void	RunUpdate();
-	void	UpdateWindow(int w, int h);
+	void					ReleaseD3D();
+	void					RunUpdate();
+	void					UpdateWindow(int w, int h);
 
-	ID3D11Device* GetDevice() { return g_pD3DDevice; }
-	ID3D11DeviceContext* GetContext() { return g_pImmediateContext; }
+	void					LoadScene(std::string sceneLoc);
+	void					UnloadCurrentScene();
+	Scene*					GetCurrentScene();
+
+	ID3D11Device*			GetDevice() { return g_pD3DDevice; }
+	ID3D11DeviceContext*	GetContext() { return g_pImmediateContext; }
 };
 

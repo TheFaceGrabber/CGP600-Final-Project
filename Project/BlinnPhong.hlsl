@@ -81,7 +81,9 @@ float4 frag(VOut i) : SV_TARGET
     
     float smoothness = specTex.a * Smoothness;
     float3 viewDir = normalize(WorldCameraPosition - worldPos.xyz);
-    float gloss = BlinnPhong(smoothness, normal, lightDir, viewDir) * ndl;
+	float gloss = 0;
+	if(ndl > 0)
+		gloss = BlinnPhong(smoothness, normal, lightDir, viewDir) * ndl;
     float4 specCol = float4(specTex.rgb, 1);
 
     //From Eric Lengyel "Mathematics for 3D Game Programming and Computer Graphics"

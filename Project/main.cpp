@@ -128,10 +128,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		Direct3D::GetInstance()->UpdateWindow(width, height);
 		return 1;
 
-	case WM_KEYDOWN:
-		//if (wParam == VK_ESCAPE)
-		//	DestroyWindow(g_hWnd);
-		return 0;
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}

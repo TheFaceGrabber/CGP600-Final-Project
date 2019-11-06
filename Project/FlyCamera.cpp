@@ -5,6 +5,8 @@
 #include <xnamath.h>
 #include "Camera.h"
 #include "DirectionLight.h"
+#include "Scene.h"
+#include "GUI.h"
 
 void FlyCamera::Start()
 {
@@ -15,7 +17,7 @@ void FlyCamera::Start()
 
 void FlyCamera::Update()
 {
-	int moveSpeed = 10;
+	int moveSpeed = 5;
 	XMFLOAT2 mouse = Input::GetInstance()->GetMouseDelta();
 
 	mouse.x *= m_mouseSens;
@@ -26,7 +28,12 @@ void FlyCamera::Update()
 	newRot.y += mouse.x;
 	m_owner->SetRotation(newRot);
 
-	XMFLOAT3 newPos = m_owner->GetPosition();
+	if (!Direct3D::GetInstance()->GetCurrentScene()->CheckForVoxel(GetOwner()->GetPosition()))
+	{
+		XMFLOAT3 pos = GetOwner()->GetPosition();
+		pos.y -= 0.01f;
+		GetOwner()->SetPosition(pos);
+	}
 
 	if (Input::GetInstance()->IsMouseButtonPressed(1))
 	{
@@ -37,11 +44,14 @@ void FlyCamera::Update()
 		Camera::SetFov(65);
 	}
 
+	XMFLOAT3 newPos = m_owner->GetPosition();
+
 	if (Input::GetInstance()->IsKeyPressed(DIK_W))
 	{
 		XMFLOAT3 forward = m_owner->GetForward();
+		//forward.y = 0;
 		newPos.x += forward.x * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();
-		newPos.y += forward.y * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();
+		//newPos.y += forward.y * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();
 		newPos.z += forward.z * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();
 
 		m_owner->SetPosition(newPos);
@@ -50,7 +60,7 @@ void FlyCamera::Update()
 	{
 		XMFLOAT3 forward = m_owner->GetForward();
 		newPos.x -= forward.x * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();
-		newPos.y -= forward.y * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();
+		//newPos.y -= forward.y * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();
 		newPos.z -= forward.z * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();
 
 		m_owner->SetPosition(newPos);
@@ -60,7 +70,7 @@ void FlyCamera::Update()
 	{
 		XMFLOAT3 right = m_owner->GetRight();
 		newPos.x += right.x * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();;
-		newPos.y += right.y * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();;
+		//newPos.y += right.y * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();;
 		newPos.z += right.z * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();;
 
 		m_owner->SetPosition(newPos);
@@ -69,7 +79,7 @@ void FlyCamera::Update()
 	{
 		XMFLOAT3 right = m_owner->GetRight();
 		newPos.x -= right.x * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();;
-		newPos.y -= right.y * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();;
+		//newPos.y -= right.y * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();;
 		newPos.z -= right.z * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();;
 
 		m_owner->SetPosition(newPos);

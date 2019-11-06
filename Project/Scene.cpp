@@ -29,7 +29,7 @@ void Scene::ParseLevelGrid(Scene* scene, map<char, Block> blocks, vector<string>
 	map<char, vector<DefaultVertex>> meshVerts;
 
 	GameObject* level = new GameObject("Level Grid");
-	const int scale = 5;
+	const float scale = scene->m_Scale;
 	level->SetScale({ scale,scale,scale });
 
 	for (auto& pair : blocks)
@@ -237,6 +237,13 @@ Scene* Scene::LoadFromFile(std::string file)
 
 		if (caption == "End")
 			fileCurSection = "";
+		else if (fileCurSection == "Scale")
+		{
+			if (!caption.empty()) {
+				scene->SetScale(std::stof(caption));
+				fileCurSection = "";
+			}
+		}
 		else if (fileCurSection == "Sun")
 		{
 			if (caption.empty())
@@ -376,6 +383,9 @@ Scene* Scene::LoadFromFile(std::string file)
 				gridLines.push_back(caption);
 		}
 	}
+
+	scene->m_blocks = blocksDictionary;
+	scene->m_grid = gridLines;
 	
 	ParseLevelGrid(scene, blocksDictionary, gridLines);
 
@@ -432,5 +442,23 @@ void Scene::Unload()
 void Scene::SetSky(string material)
 {
 	m_pSky = new Skybox(material);
+}
+
+bool Scene::CheckForVoxel(XMFLOAT3 pos)
+{
+	int posX = floor((pos.x / m_Scale) + 0.5);
+	int posY = pos.y;// floor((pos.y / m_Scale));
+	int posZ = floor((pos.z / m_Scale) + 0.5);
+
+	Block block;
+	char key;
+
+	key = m_grid[posZ][posX];
+	block = m_blocks[key];
+
+	if (block.Height >= posY)
+		return true;
+
+	return false;
 }
 

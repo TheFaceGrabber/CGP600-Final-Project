@@ -23,7 +23,6 @@ using namespace std::chrono;
 Direct3D* Direct3D::m_pInstance = NULL;
 
 //Mesh* m;
-Scene* scene;
 
 Direct3D::Direct3D()
 {
@@ -32,7 +31,7 @@ Direct3D::Direct3D()
 Direct3D::~Direct3D()
 {
 	//delete m;
-	delete scene;
+	UnloadCurrentScene();
 	ConstantBuffers::Release();
 	Input::Release();
 	GUI::Release();
@@ -54,7 +53,7 @@ HRESULT Direct3D::InitialiseD3D(HWND hWnd, HINSTANCE hInst)
 	UINT createDeviceFlags = 0;
 
 #ifdef _DEBUG
-	createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+	//createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
 
 	D3D_DRIVER_TYPE driverTypes[] =
@@ -160,9 +159,9 @@ HRESULT Direct3D::InitialiseD3D(HWND hWnd, HINSTANCE hInst)
 	double t = (double)duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count() / 1000.0f;
 	m_lastTimeSample = t;
 
-	Input::GetInstance()->Update();
+	LoadScene("Test");
 
-	scene = Scene::LoadFromFile("Assets/Levels/Test.jscene");
+	Input::GetInstance()->Update();
 	return S_OK;
 }
 #pragma endregion
@@ -188,7 +187,7 @@ void Direct3D::RunUpdate()
 	m_time += m_deltaTime;
 	m_fps = 1.0f / m_deltaTime;
 
-	scene->Update();
+	m_pScene->Update();
 	GUI::GetInstance()->DrawGUIText(std::to_string(round((1/m_deltaTime) * 2.f)/2.f), -1, 1, .05);
 	GUI::GetInstance()->DrawGUIText("30/360", -1, -.9, .1);
 	GUI::GetInstance()->DrawGUIText("100%", .6, -.9, .1);
@@ -209,7 +208,7 @@ void Direct3D::RunUpdate()
 	}
 	ConstantBuffers::GetInstance()->Bind(BUFFER_LIGHTING, &lightBuff);
 
-	scene->UpdateGfx();
+	m_pScene->UpdateGfx();
 	GUI::GetInstance()->UpdateGfx();
 
 	g_pSwapChain->Present(0, 0);
@@ -288,6 +287,25 @@ void Direct3D::UpdateWindow(int w, int h)
 	vp.TopLeftX = 0;
 	vp.TopLeftY = 0;
 	g_pImmediateContext->RSSetViewports(1, &vp);
+}
+
+void Direct3D::LoadScene(std::string sceneLoc)
+{
+	UnloadCurrentScene();
+
+
+	m_pScene = Scene::LoadFromFile("Assets/Levels/" + sceneLoc + ".jscene");
+}
+
+void Direct3D::UnloadCurrentScene()
+{
+	if(m_pScene)
+		delete m_pScene;
+}
+
+Scene* Direct3D::GetCurrentScene()
+{
+	return m_pScene;
 }
 
 #pragma endregion
