@@ -36,7 +36,19 @@ public:
 
 	Component* AddComponent(Component* comp);
 	template <class T>
-	bool GetComponent(T& outComp);
+	T* GetComponent()
+	{
+		for (int i = 0; i < m_vComponents.size(); i++)
+		{
+			T* val = dynamic_cast<T*>(m_vComponents[i]);
+			if (val != nullptr)
+			{
+				return val;
+			}
+		}
+
+		return nullptr;
+	}
 
 	void SetPosition(XMFLOAT3 pos);
 	void SetRotation(XMFLOAT3 rot);

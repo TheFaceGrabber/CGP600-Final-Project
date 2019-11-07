@@ -51,6 +51,12 @@
     <ClCompile Include="text2D.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="PhysicsComponent.cpp">
+      <Filter>World\Gameplay\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="BoundingBoxCollider.cpp">
+      <Filter>World\Gameplay\Components\Colliders</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Mesh.h">
@@ -96,6 +102,12 @@
     <ClInclude Include="text2D.h">
       <Filter>Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="PhysicsComponent.h">
+      <Filter>World\Gameplay\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="BoundingBoxCollider.h">
+      <Filter>World\Gameplay\Components\Colliders</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Base">
@@ -127,6 +139,9 @@
     </Filter>
     <Filter Include="Assets\Levels">
       <UniqueIdentifier>{59bed21b-9f2d-4f66-824d-79311011a462}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="World\Gameplay\Components\Colliders">
+      <UniqueIdentifier>{894002a2-243b-46b9-93b9-62675cd417d0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

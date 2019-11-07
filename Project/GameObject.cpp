@@ -1,6 +1,7 @@
 #include "GameObject.h"
 #include "Component.h"
 #include "Direct3D.h"
+#include <typeinfo>
 
 #define _XM_NO_INTRINSICS_
 #define XM_NO_ALIGNMENT
@@ -100,20 +101,4 @@ void GameObject::SetRotation(XMFLOAT3 rot)
 void GameObject::SetScale(XMFLOAT3 scale)
 {
 	m_scale = scale;
-}
-
-template <class T>
-bool GameObject::GetComponent(T& outComp)
-{
-	for (int i = 0; i < m_vComponents.size(); i++)
-	{
-		T* val = dynamic_cast<const T*>(m_vComponents[i]);
-		if (val != nullptr)
-		{
-			outComp = *val;
-			return true;
-		}
-	}
-
-	return false;
 }

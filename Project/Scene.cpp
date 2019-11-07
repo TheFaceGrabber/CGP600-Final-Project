@@ -5,6 +5,8 @@
 #include "DirectionLight.h"
 #include "FlyCamera.h"
 #include "MeshRenderer.h"
+#include "PhysicsComponent.h"
+#include "BoundingBoxCollider.h"
 
 Scene::Scene()
 {
@@ -283,6 +285,8 @@ Scene* Scene::LoadFromFile(std::string file)
 			{
 				playerObj = new GameObject("Player");
 				playerObj->AddComponent(new FlyCamera());
+				playerObj->AddComponent(new PhysicsComponent());
+				playerObj->AddComponent(new BoundingBoxCollider());
 				scene->RegisterGameObject(playerObj);
 			}
 			else if (caption == "Rotation")

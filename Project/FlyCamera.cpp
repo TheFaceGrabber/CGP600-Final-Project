@@ -28,13 +28,6 @@ void FlyCamera::Update()
 	newRot.y += mouse.x;
 	m_owner->SetRotation(newRot);
 
-	if (!Direct3D::GetInstance()->GetCurrentScene()->CheckForVoxel(GetOwner()->GetPosition()))
-	{
-		XMFLOAT3 pos = GetOwner()->GetPosition();
-		pos.y -= 0.01f;
-		GetOwner()->SetPosition(pos);
-	}
-
 	if (Input::GetInstance()->IsMouseButtonPressed(1))
 	{
 		Camera::SetFov(15);

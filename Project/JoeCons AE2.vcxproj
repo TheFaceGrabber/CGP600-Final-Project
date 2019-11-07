@@ -144,6 +144,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BoundingBoxCollider.cpp" />
+    <ClCompile Include="PhysicsComponent.cpp" />
     <ClCompile Include="text2D.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Component.cpp" />
@@ -185,6 +187,8 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BoundingBoxCollider.h" />
+    <ClInclude Include="PhysicsComponent.h" />
     <ClInclude Include="text2D.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Component.h" />
