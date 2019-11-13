@@ -17,64 +17,60 @@ void FlyCamera::Start()
 
 void FlyCamera::Update()
 {
-	int moveSpeed = 5;
-	XMFLOAT2 mouse = Input::GetInstance()->GetMouseDelta();
 
-	mouse.x *= m_mouseSens;
-	mouse.y *= m_mouseSens;
-
-	XMFLOAT3 newRot = m_owner->GetRotation();
-	newRot.x += mouse.y;
-	newRot.y += mouse.x;
-	m_owner->SetRotation(newRot);
-
-	if (Input::GetInstance()->IsMouseButtonPressed(1))
+	if (!m_pPhysComp)
 	{
-		Camera::SetFov(15);
+		m_pPhysComp = GetOwner()->GetComponent<PhysicsComponent>();
 	}
 	else
 	{
-		Camera::SetFov(65);
-	}
+		int moveSpeed = 5;
+		XMFLOAT2 mouse = Input::GetInstance()->GetMouseDelta();
 
-	XMFLOAT3 newPos = m_owner->GetPosition();
+		mouse.x *= m_mouseSens;
+		mouse.y *= m_mouseSens;
 
-	if (Input::GetInstance()->IsKeyPressed(DIK_W))
-	{
-		XMFLOAT3 forward = m_owner->GetForward();
-		//forward.y = 0;
-		newPos.x += forward.x * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();
-		//newPos.y += forward.y * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();
-		newPos.z += forward.z * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();
+		XMFLOAT3 newRot = m_owner->GetRotation();
+		newRot.x += mouse.y;
+		newRot.y += mouse.x;
+		m_owner->SetRotation(newRot);
 
-		m_owner->SetPosition(newPos);
-	}
-	if (Input::GetInstance()->IsKeyPressed(DIK_S))
-	{
-		XMFLOAT3 forward = m_owner->GetForward();
-		newPos.x -= forward.x * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();
-		//newPos.y -= forward.y * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();
-		newPos.z -= forward.z * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();
+		XMFLOAT3 newVel = {0,0,0};
 
-		m_owner->SetPosition(newPos);
-	}
+		if (Input::GetInstance()->IsKeyPressed(DIK_W))
+		{
+			XMFLOAT3 forward = m_owner->GetForward();
+			//forward.y = 0;
+			newVel.x += forward.x * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();
+			newVel.z += forward.z * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();
+		}
+		else if (Input::GetInstance()->IsKeyPressed(DIK_S))
+		{
+			XMFLOAT3 forward = m_owner->GetForward();
+			newVel.x += -forward.x * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();
+			newVel.z += -forward.z * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();
+		}
 
-	if (Input::GetInstance()->IsKeyPressed(DIK_D))
-	{
-		XMFLOAT3 right = m_owner->GetRight();
-		newPos.x += right.x * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();;
-		//newPos.y += right.y * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();;
-		newPos.z += right.z * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();;
+		if (Input::GetInstance()->IsKeyPressed(DIK_D))
+		{
+			XMFLOAT3 right = m_owner->GetRight();
+			newVel.x += right.x * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();;
+			newVel.z += right.z * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();;
+		}
+		else if (Input::GetInstance()->IsKeyPressed(DIK_A))
+		{
+			XMFLOAT3 right = m_owner->GetRight();
+			newVel.x += -right.x * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();
+			newVel.z += -right.z * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();
+		}
 
-		m_owner->SetPosition(newPos);
-	}
-	if (Input::GetInstance()->IsKeyPressed(DIK_A))
-	{
-		XMFLOAT3 right = m_owner->GetRight();
-		newPos.x -= right.x * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();;
-		//newPos.y -= right.y * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();;
-		newPos.z -= right.z * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();;
+		if (Input::GetInstance()->IsKeyPressed(DIK_SPACE))
+		{
+			newVel.y = 0.001;
+		}
 
-		m_owner->SetPosition(newPos);
+		XMFLOAT3 physVel = m_pPhysComp->GetVelocity();
+		newVel.y += physVel.y;
+		m_pPhysComp->SetVelocity(newVel);
 	}
 }

@@ -8,7 +8,7 @@
 class PhysicsComponent : public Component
 {
 private:
-	const float GRAVITY = 0;// -9.81;
+	const float GRAVITY = -9.81/80;
 
 	XMFLOAT3 m_Velocity;
 	bool m_UseGravity = true;

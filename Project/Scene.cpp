@@ -284,9 +284,12 @@ Scene* Scene::LoadFromFile(std::string file)
 			if (caption.empty())
 			{
 				playerObj = new GameObject("Player");
-				playerObj->AddComponent(new FlyCamera());
 				playerObj->AddComponent(new PhysicsComponent());
-				playerObj->AddComponent(new BoundingBoxCollider());
+				playerObj->AddComponent(new FlyCamera());
+				BoundingBoxCollider* col = (BoundingBoxCollider*)playerObj->AddComponent(new BoundingBoxCollider());
+				col->SetWidth(.5);
+				col->SetHeight(1);
+				//col->SetCentre({ 0,-.5,0 });
 				scene->RegisterGameObject(playerObj);
 			}
 			else if (caption == "Rotation")
@@ -457,10 +460,16 @@ bool Scene::CheckForVoxel(XMFLOAT3 pos)
 	Block block;
 	char key;
 
+	if (posZ < 0 || posZ >= m_grid.size())
+		return false;
+
+	if (posX < 0 || posX >= m_grid[posZ].size())
+		return false;
+
 	key = m_grid[posZ][posX];
 	block = m_blocks[key];
 
-	if (block.Height >= posY)
+	if (block.Height * m_Scale >= posY)
 		return true;
 
 	return false;

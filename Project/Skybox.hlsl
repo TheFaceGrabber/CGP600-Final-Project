@@ -46,6 +46,6 @@ float4 frag(VOut i) : SV_TARGET
 	finalCol = SkyTex.Sample(Sampler, i.uv);
 
     float4 sun = min(pow(max(0, dot(v, lightDir)), SunSize), 1) * SunStrength * LightColour;
-
+    
 	return sun+finalCol;
 }

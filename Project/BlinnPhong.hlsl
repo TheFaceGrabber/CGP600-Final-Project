@@ -52,7 +52,7 @@ float BlinnPhong(float smoothness, float3 normal, float3 lightDir, float3 viewDi
     //Smoothness to exponnent found here
     //http://mfactorgames.com/2017/11/22/conversion-between-specular-exponent-specular-roughness-and-specular-glossiness/
     float shininess = 2 / pow((1 - smoothness), 2) - 2;
-
+    
     //From Eric Lengyel "Mathematics for 3D Game Programming and Computer Graphics"
     float3 halfWay = normalize(lightDir + viewDir);
     float angle = max(dot(halfWay, normal), 0.0);
@@ -92,6 +92,6 @@ float4 frag(VOut i) : SV_TARGET
     
     finalCol = finalSpec + finalDiff;
     
-    return finalCol;//float4(finalCol, 1);
+    return finalCol;
 
 }

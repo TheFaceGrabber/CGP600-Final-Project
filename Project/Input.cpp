@@ -15,6 +15,16 @@ Input* Input::GetInstance()
 void Input::Update()
 {
 	HRESULT hr;
+
+	hr = m_pMseDevice->GetDeviceState(sizeof(m_MseState), (LPVOID)&m_MseState);
+	if (FAILED(hr))
+	{
+		if (hr == DIERR_INPUTLOST || hr == DIERR_NOTACQUIRED)
+		{
+			m_pMseDevice->Acquire();
+		}
+	}
+
 	hr = m_pKbdDevice->GetDeviceState(sizeof(m_KbdKeysState), (LPVOID)&m_KbdKeysState);
 	if(FAILED(hr))
 	{
@@ -23,17 +33,8 @@ void Input::Update()
 			m_pKbdDevice->Acquire();
 		}
 	}
-	hr = m_pMseDevice->GetDeviceState(sizeof(m_MseState), (LPVOID)&m_MseState);
-	if (FAILED(hr))
-	{
-		//m_MseState.lX = 0;
-		//m_MseState.lY = 0;
-		//m_MseState.lZ = 0;
-		if (hr == DIERR_INPUTLOST || hr == DIERR_NOTACQUIRED)
-		{
-			m_pMseDevice->Acquire();
-		}
-	}
+
+
 }
 
 bool Input::IsKeyPressed(unsigned char keyCode)

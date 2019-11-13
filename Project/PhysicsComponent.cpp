@@ -24,15 +24,13 @@ bool PhysicsComponent::GetUseGravity()
 
 void PhysicsComponent::Update()
 {
-	if(m_UseGravity)
-		m_Velocity.y += (GRAVITY * Direct3D::GetInstance()->GetDeltaTime());
-
 	XMFLOAT3 curPos = GetOwner()->GetPosition();
 	curPos.x += m_Velocity.x;
 	curPos.y += m_Velocity.y;
 	curPos.z += m_Velocity.z;
 
-	//OutputDebugString((std::to_string(m_Velocity.y) + "\n").c_str());
-
 	GetOwner()->SetPosition(curPos);
+
+	if (m_UseGravity)
+		m_Velocity.y += (GRAVITY * Direct3D::GetInstance()->GetDeltaTime());
 }
