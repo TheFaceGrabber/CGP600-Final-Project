@@ -13,8 +13,7 @@ cbuffer CBuffer1 : register(b1)
     matrix WVP;
     matrix World;
 
-	matrix DirLightView;
-	matrix DirLightProjection;
+    matrix DirLightWVP;
 };
 
 sampler Sampler : register(s0);

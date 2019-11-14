@@ -30,10 +30,9 @@ void MeshRenderer::UpdateGfx()
 		DirectionLight::GetMainLight()->GetOwner()->GetUp().z };
 
 	XMMATRIX lightViewMat = XMMatrixLookToLH(pos, forward, up);
-	XMMATRIX lightProjMat = XMMatrixOrthographicLH(150, 150, .1, 100);
+	XMMATRIX lightProjMat = XMMatrixOrthographicLH(80, 80, 30, 80);
 
-	m_transBuffer.DirLightView = lightViewMat;
-	m_transBuffer.DirLightProjection = lightProjMat;
+	m_transBuffer.DirLightWVP = m_owner->GetWorldMatrix() * lightViewMat * lightProjMat;
 	m_transBuffer.World = m_owner->GetWorldMatrix();
 	m_transBuffer.WorldViewProjection = m_owner->GetWorldMatrix() * Camera::GetViewMatrix() * Camera::GetProjectionMatrix();
 
@@ -63,11 +62,10 @@ void MeshRenderer::UpdateShadowMap()
 		DirectionLight::GetMainLight()->GetOwner()->GetUp().z };
 
 	XMMATRIX lightViewMat = XMMatrixLookToLH(pos, forward, up);
-	XMMATRIX lightProjMat = XMMatrixOrthographicLH(150, 150, .1, 100);
+	XMMATRIX lightProjMat = XMMatrixOrthographicLH(80, 80, 30, 80);
 	m_transBuffer.WorldViewProjection = m_owner->GetWorldMatrix() * lightViewMat * lightProjMat;
 
-	m_transBuffer.DirLightView = lightViewMat;
-	m_transBuffer.DirLightProjection = lightProjMat;
+	m_transBuffer.DirLightWVP = m_owner->GetWorldMatrix() * lightViewMat * lightProjMat;
 
 	ConstantBuffers::GetInstance()->Bind(BUFFER_TRANSFORMATIONS, &m_transBuffer);
 	Direct3D::GetInstance()->DrawBasic(m_pMesh);

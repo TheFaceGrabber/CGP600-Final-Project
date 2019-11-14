@@ -155,6 +155,7 @@ HRESULT Direct3D::InitialiseD3D(HWND hWnd, HINSTANCE hInst)
 
 	g_pImmediateContext->RSSetViewports(1, &viewport);
 
+	//TODO move this all to a class
 	//Create shadowmap
 	D3D11_TEXTURE2D_DESC shadowMapDesc;
 	ZeroMemory(&shadowMapDesc, sizeof(D3D11_TEXTURE2D_DESC));
@@ -163,8 +164,8 @@ HRESULT Direct3D::InitialiseD3D(HWND hWnd, HINSTANCE hInst)
 	shadowMapDesc.ArraySize = 1;
 	shadowMapDesc.SampleDesc.Count = 1;
 	shadowMapDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_DEPTH_STENCIL;
-	shadowMapDesc.Height = 1024;
-	shadowMapDesc.Width = 1024;
+	shadowMapDesc.Height = 2048;
+	shadowMapDesc.Width = 2048;
 
 	ID3D11Texture2D* pShadowMap;
 	hr = g_pD3DDevice->CreateTexture2D(&shadowMapDesc,nullptr,&pShadowMap);
@@ -195,14 +196,14 @@ HRESULT Direct3D::InitialiseD3D(HWND hWnd, HINSTANCE hInst)
 	pShadowMap->Release();
 
 	ZeroMemory(&shadowViewport, sizeof(D3D11_VIEWPORT));
-	shadowViewport.Width = (FLOAT)1024;
-	shadowViewport.Height = (FLOAT)1024;
+	shadowViewport.Width = (FLOAT)2048;
+	shadowViewport.Height = (FLOAT)2048;
 	shadowViewport.MinDepth = 0.0f;
 	shadowViewport.MaxDepth = 1.0f;
 
 	D3D11_RASTERIZER_DESC shadowRenderStateDesc;
 	ZeroMemory(&shadowRenderStateDesc, sizeof(D3D11_RASTERIZER_DESC));
-	shadowRenderStateDesc.CullMode = D3D11_CULL_NONE;
+	shadowRenderStateDesc.CullMode = D3D11_CULL_FRONT;
 	shadowRenderStateDesc.FillMode = D3D11_FILL_SOLID;
 	shadowRenderStateDesc.DepthClipEnable = true;
 

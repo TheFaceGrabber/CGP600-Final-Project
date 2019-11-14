@@ -42,8 +42,7 @@ VOut vert(VIn v)
 
 	float4 worldPos = LocalToWorld(float4(v.position, 1.0f));
 	output.worldPos = worldPos;
-	float4 lightSpacePos = mul(worldPos, DirLightView);
-	lightSpacePos = mul(lightSpacePos, DirLightProjection);
+    float4 lightSpacePos = mul(DirLightWVP, float4(v.position, 1.0f));
 	output.lightSpacePos = lightSpacePos;
 
 	return output;
@@ -85,31 +84,40 @@ float4 frag(VOut i) : SV_TARGET
     float ndl = saturate(dot(normal, lightDir));
 
 	float2 shadowTexCoords;
-	shadowTexCoords.x = 0.5f + (i.lightSpacePos.x / i.lightSpacePos.w * 0.5f);
-	shadowTexCoords.y = 0.5f - (i.lightSpacePos.y / i.lightSpacePos.w * 0.5f);
-
-	float4 shadowTex = ShadowMapTex.Sample(Sampler, i.uv);
-
-	float pixelDepth = i.lightSpacePos.z / i.lightSpacePos.w;
-
-	float lighting;
+    shadowTexCoords.x = i.lightSpacePos.x / i.lightSpacePos.w / 2.0f + 0.5f;
+    shadowTexCoords.y = -i.lightSpacePos.y / i.lightSpacePos.w / 2.0f + 0.5f;
+    
+    float pixelDepth = i.lightSpacePos.z/i.lightSpacePos.w;
+        
+	float lighting = 0;
 
 	if ((saturate(shadowTexCoords.x) == shadowTexCoords.x) &&
-		(saturate(shadowTexCoords.y) == shadowTexCoords.y) &&
-		(pixelDepth > 0))
+		(saturate(shadowTexCoords.y) == shadowTexCoords.y))
 	{
-		float margin = acos(saturate(ndl));
-#ifdef LINEAR
-		// The offset can be slightly smaller with smoother shadow edges.
-		float epsilon = 0.0005 / margin;
-#else
-		float epsilon = 0.001 / margin;
-#endif
+        float bias = 0.0001 * tan(acos(ndl));
 		// Clamp epsilon to a fixed range so it doesn't go overboard.
-		epsilon = clamp(epsilon, 0, 0.1);
+        bias = clamp(bias, 0, 0.01);
+        
+        float2 poissonDisk[4];
+        poissonDisk[0] = float2(-0.94201624, -0.39906216);
+        poissonDisk[1] = float2(0.94558609, -0.76890725);
+        poissonDisk[2] = float2(-0.094184101, -0.92938870);
+        poissonDisk[3] = float2(0.34495938, 0.29387760);
+        
+        int interations = 4;
 
-		lighting = float(ShadowMapTex.SampleCmpLevelZero(ShadowsSampler, shadowTexCoords, pixelDepth + epsilon));
-	}
+        for (int i = 0; i < interations; i++)
+        {
+            float d = ShadowMapTex.SampleCmpLevelZero(ShadowsSampler, shadowTexCoords.xy + poissonDisk[i] / 700, pixelDepth - bias).x;
+            lighting += d;
+        }
+        lighting /= interations;
+        
+        //if (lighting < pixelDepth - bias)
+        //    ndl = 0;
+        ndl *= lighting;
+
+    }
 
     float smoothness = specTex.a * Smoothness;
     float3 viewDir = normalize(WorldCameraPosition - worldPos.xyz);
@@ -124,6 +132,6 @@ float4 frag(VOut i) : SV_TARGET
     
     finalCol = finalSpec + finalDiff;
     
-    return lighting;
+    return finalCol;
 
 }

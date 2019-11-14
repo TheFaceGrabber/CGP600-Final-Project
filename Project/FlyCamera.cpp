@@ -17,11 +17,6 @@ void FlyCamera::Start()
 
 void FlyCamera::Update()
 {
-	XMFLOAT3 rot = DirectionLight::GetMainLight()->GetOwner()->GetRotation();
-	rot.y += 0.01;
-	DirectionLight::GetMainLight()->GetOwner()->SetRotation(rot);
-
-
 	if (!m_pPhysComp)
 	{
 		m_pPhysComp = GetOwner()->GetComponent<PhysicsComponent>();
