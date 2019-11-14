@@ -14,6 +14,7 @@ private:
 	ID3D11Device*			g_pD3DDevice = NULL;
 	ID3D11DeviceContext*	g_pImmediateContext = NULL;
 	IDXGISwapChain*			g_pSwapChain = NULL;
+	D3D11_VIEWPORT			viewport;
 
 	ID3D11RenderTargetView* g_pBackBufferRTView = NULL;
 
@@ -32,6 +33,13 @@ private:
 	HINSTANCE				m_hInst;
 
 	Scene*					m_pScene;
+	Shader*					m_pBasicShader;
+
+	ID3D11ShaderResourceView*	m_pShadowMap;
+	ID3D11DepthStencilView*		m_pZShadowBuffer;
+	D3D11_VIEWPORT				shadowViewport;
+	ID3D11RasterizerState*		m_pShadowRenderState;
+	ID3D11RasterizerState*		m_pDefaultRenderState;
 
 public:
 	Direct3D();
@@ -46,6 +54,7 @@ public:
 	HWND					GetHWindow() { return m_hWnd; }
 
 	void					Draw(Mesh* mesh);
+	void					DrawBasic(Mesh* mesh);
 
 	int						GetScreenWidth() { return m_screen_width; }
 	int						GetScreenHeight() { return m_screen_height; }

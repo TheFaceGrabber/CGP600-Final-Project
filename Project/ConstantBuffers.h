@@ -25,6 +25,8 @@ struct TransformationBuffer //BUFFER 1
 {
 	XMMATRIX WorldViewProjection;
 	XMMATRIX World;
+	XMMATRIX DirLightView;
+	XMMATRIX DirLightProjection;
 };
 
 class ConstantBuffers

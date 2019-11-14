@@ -441,6 +441,14 @@ void Scene::UpdateGfx()
 	}
 }
 
+void Scene::UpdateShadowMap()
+{
+	for (int i = 0; i < m_vGameObjects.size(); i++)
+	{
+		m_vGameObjects[i]->UpdateShadowMap();
+	}
+}
+
 void Scene::Unload()
 {
 	//Tell scene manager I am unloading and then "delete this"

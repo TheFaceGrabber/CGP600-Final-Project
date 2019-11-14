@@ -5,10 +5,9 @@ cbuffer Properties : register(b2)
     float3 Padding;
 };
 
-Texture2D DiffuseTex : register(t0);
-Texture2D SpecularTex : register(t1);
-Texture2D NormalTex : register(t2);
-sampler Sampler : register(s0);
+Texture2D DiffuseTex : register(t1);
+Texture2D SpecularTex : register(t2);
+Texture2D NormalTex : register(t3);
 
 struct VIn
 {
@@ -21,11 +20,12 @@ struct VIn
 struct VOut
 {
     float4 position : SV_POSITION;
-    float4 scrnPosition : TEXCOORD1;
+	float4 worldPos:TEXCOORD1;
     float3 normal : NORMAL;
     float3 tangent : TANGENT;
     float3 binormal : BITANGENT;
     float2 uv : TEXCOORD;
+	float4 lightSpacePos : POSITION2;
 };
 
 #include "ReqInc.hlsl"
@@ -35,11 +35,16 @@ VOut vert(VIn v)
 	VOut output;
 
     output.position = LocalToWVP(float4(v.position, 1.0f));
-    output.scrnPosition = float4(v.position, 1.0f);
     output.uv = v.uv;
     output.normal = v.normal;
     output.tangent = v.tangent;
     output.binormal = cross(output.tangent, output.normal);
+
+	float4 worldPos = LocalToWorld(float4(v.position, 1.0f));
+	output.worldPos = worldPos;
+	float4 lightSpacePos = mul(worldPos, DirLightView);
+	lightSpacePos = mul(lightSpacePos, DirLightProjection);
+	output.lightSpacePos = lightSpacePos;
 
 	return output;
 }
@@ -63,7 +68,7 @@ float4 frag(VOut i) : SV_TARGET
 {
     float4 finalCol;
 
-    float4 worldPos = LocalToWorld(i.scrnPosition);
+	float4 worldPos = i.worldPos;
 
     i.normal = normalize(LocalToWorldNormal(i.normal));
     i.tangent = normalize(LocalToWorldNormal(i.tangent));
@@ -78,7 +83,34 @@ float4 frag(VOut i) : SV_TARGET
     float4 specTex = SpecularTex.Sample(Sampler, i.uv);
 
     float ndl = saturate(dot(normal, lightDir));
-    
+
+	float2 shadowTexCoords;
+	shadowTexCoords.x = 0.5f + (i.lightSpacePos.x / i.lightSpacePos.w * 0.5f);
+	shadowTexCoords.y = 0.5f - (i.lightSpacePos.y / i.lightSpacePos.w * 0.5f);
+
+	float4 shadowTex = ShadowMapTex.Sample(Sampler, i.uv);
+
+	float pixelDepth = i.lightSpacePos.z / i.lightSpacePos.w;
+
+	float lighting;
+
+	if ((saturate(shadowTexCoords.x) == shadowTexCoords.x) &&
+		(saturate(shadowTexCoords.y) == shadowTexCoords.y) &&
+		(pixelDepth > 0))
+	{
+		float margin = acos(saturate(ndl));
+#ifdef LINEAR
+		// The offset can be slightly smaller with smoother shadow edges.
+		float epsilon = 0.0005 / margin;
+#else
+		float epsilon = 0.001 / margin;
+#endif
+		// Clamp epsilon to a fixed range so it doesn't go overboard.
+		epsilon = clamp(epsilon, 0, 0.1);
+
+		lighting = float(ShadowMapTex.SampleCmpLevelZero(ShadowsSampler, shadowTexCoords, pixelDepth + epsilon));
+	}
+
     float smoothness = specTex.a * Smoothness;
     float3 viewDir = normalize(WorldCameraPosition - worldPos.xyz);
 	float gloss = 0;
@@ -92,6 +124,6 @@ float4 frag(VOut i) : SV_TARGET
     
     finalCol = finalSpec + finalDiff;
     
-    return finalCol;
+    return lighting;
 
 }

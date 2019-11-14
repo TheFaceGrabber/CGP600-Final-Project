@@ -32,6 +32,7 @@ Direct3D::~Direct3D()
 {
 	//delete m;
 	UnloadCurrentScene();
+	delete m_pBasicShader;
 	ConstantBuffers::Release();
 	Input::Release();
 	GUI::Release();
@@ -144,8 +145,7 @@ HRESULT Direct3D::InitialiseD3D(HWND hWnd, HINSTANCE hInst)
 	g_pImmediateContext->OMSetRenderTargets(1, &g_pBackBufferRTView, g_pZBuffer);
 
 	// Set the viewport
-	D3D11_VIEWPORT viewport;
-
+	ZeroMemory(&viewport, sizeof(D3D11_VIEWPORT));
 	viewport.TopLeftX = 0;
 	viewport.TopLeftY = 0;
 	viewport.Width = (FLOAT)m_screen_width;
@@ -155,9 +155,75 @@ HRESULT Direct3D::InitialiseD3D(HWND hWnd, HINSTANCE hInst)
 
 	g_pImmediateContext->RSSetViewports(1, &viewport);
 
+	//Create shadowmap
+	D3D11_TEXTURE2D_DESC shadowMapDesc;
+	ZeroMemory(&shadowMapDesc, sizeof(D3D11_TEXTURE2D_DESC));
+	shadowMapDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
+	shadowMapDesc.MipLevels = 1;
+	shadowMapDesc.ArraySize = 1;
+	shadowMapDesc.SampleDesc.Count = 1;
+	shadowMapDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_DEPTH_STENCIL;
+	shadowMapDesc.Height = 1024;
+	shadowMapDesc.Width = 1024;
+
+	ID3D11Texture2D* pShadowMap;
+	hr = g_pD3DDevice->CreateTexture2D(&shadowMapDesc,nullptr,&pShadowMap);
+
+	D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
+	ZeroMemory(&depthStencilViewDesc, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
+	depthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	depthStencilViewDesc.Texture2D.MipSlice = 0;
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
+	ZeroMemory(&shaderResourceViewDesc, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
+	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	shaderResourceViewDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+	shaderResourceViewDesc.Texture2D.MipLevels = 1;
+
+	hr = g_pD3DDevice->CreateDepthStencilView(
+		pShadowMap,
+		&depthStencilViewDesc,
+		&m_pZShadowBuffer
+	);
+
+	hr = g_pD3DDevice->CreateShaderResourceView(
+		pShadowMap,
+		&shaderResourceViewDesc,
+		&m_pShadowMap
+	);
+	pShadowMap->Release();
+
+	ZeroMemory(&shadowViewport, sizeof(D3D11_VIEWPORT));
+	shadowViewport.Width = (FLOAT)1024;
+	shadowViewport.Height = (FLOAT)1024;
+	shadowViewport.MinDepth = 0.0f;
+	shadowViewport.MaxDepth = 1.0f;
+
+	D3D11_RASTERIZER_DESC shadowRenderStateDesc;
+	ZeroMemory(&shadowRenderStateDesc, sizeof(D3D11_RASTERIZER_DESC));
+	shadowRenderStateDesc.CullMode = D3D11_CULL_NONE;
+	shadowRenderStateDesc.FillMode = D3D11_FILL_SOLID;
+	shadowRenderStateDesc.DepthClipEnable = true;
+
+	g_pD3DDevice->CreateRasterizerState(
+		&shadowRenderStateDesc,
+		&m_pShadowRenderState
+	);
+
+	shadowRenderStateDesc.CullMode = D3D11_CULL_BACK;
+
+	g_pD3DDevice->CreateRasterizerState(
+		&shadowRenderStateDesc,
+		&m_pDefaultRenderState
+	);
+	//End create shadowmap
+
 	//Init time
 	double t = (double)duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count() / 1000.0f;
 	m_lastTimeSample = t;
+
+	m_pBasicShader = new Shader("Unlit.hlsl");
 
 	LoadScene("Test");
 
@@ -175,9 +241,8 @@ void Direct3D::RunUpdate()
 		DestroyWindow(m_hWnd);
 
 	LightingBuffer lightBuff;
-	TransformationBuffer transBuffer;
 
-	Sleep(1);
+	Sleep(0.5f);
 	double t = (double)duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count() / 1000.0f;
 
 	double diff = t - m_lastTimeSample;
@@ -188,13 +253,27 @@ void Direct3D::RunUpdate()
 	m_fps = 1.0f / m_deltaTime;
 
 	m_pScene->Update();
-	GUI::GetInstance()->DrawGUIText(std::to_string(round((1/m_deltaTime) * 2.f)/2.f), -1, 1, .05);
-	GUI::GetInstance()->DrawGUIText("30/360", -1, -.9, .1);
-	GUI::GetInstance()->DrawGUIText("100%", .6, -.9, .1);
-
 	float rgba_clear_colour[4] = { 0.4, 0.58, 0.92, 1.0f };
+	//Clear shadowmap
+	g_pImmediateContext->ClearRenderTargetView(g_pBackBufferRTView, rgba_clear_colour);
+	g_pImmediateContext->ClearDepthStencilView(m_pZShadowBuffer, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+	g_pImmediateContext->OMSetRenderTargets(0, nullptr, m_pZShadowBuffer);
+	g_pImmediateContext->RSSetViewports(1, &shadowViewport);
+
+	g_pImmediateContext->RSSetState(m_pShadowRenderState);
+
+	m_pScene->UpdateShadowMap();
+
+	g_pImmediateContext->RSSetState(m_pDefaultRenderState);
+	g_pImmediateContext->OMSetRenderTargets(1, &g_pBackBufferRTView, g_pZBuffer);
+	g_pImmediateContext->RSSetViewports(1, &viewport);
 	g_pImmediateContext->ClearRenderTargetView(g_pBackBufferRTView, rgba_clear_colour);
 	g_pImmediateContext->ClearDepthStencilView(g_pZBuffer, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+	GUI::GetInstance()->DrawGUIText(std::to_string(round((1 / m_deltaTime) * 2.f) / 2.f), -1, 1, .05);
+	GUI::GetInstance()->DrawGUIText("30/360", -1, -.9, .1);
+	GUI::GetInstance()->DrawGUIText("100%", .6, -.9, .1);
 
 	if(Camera::GetMain())
 		lightBuff.CameraPosition = Camera::GetMain()->GetPosition();
@@ -210,12 +289,13 @@ void Direct3D::RunUpdate()
 
 	m_pScene->UpdateGfx();
 	GUI::GetInstance()->UpdateGfx();
-
 	g_pSwapChain->Present(0, 0);
 }
 
 void Direct3D::Draw(Mesh* mesh)
 {
+	Direct3D::GetInstance()->GetContext()->PSSetShaderResources(0, 1, &m_pShadowMap);
+
 	g_pImmediateContext->VSSetShader(mesh->GetShader()->GetVertexShader(), 0, 0);
 	g_pImmediateContext->PSSetShader(mesh->GetShader()->GetPixelShader(), 0, 0);
 
@@ -225,6 +305,23 @@ void Direct3D::Draw(Mesh* mesh)
 	UINT offset = 0;
 
 	g_pImmediateContext->IASetInputLayout(mesh->GetShader()->GetInputLayout());
+	g_pImmediateContext->IASetVertexBuffers(0, 1, &vertBuff, &stride, &offset);
+	g_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	g_pImmediateContext->Draw(mesh->GetVertices().capacity(), 0);
+}
+
+void Direct3D::DrawBasic(Mesh* mesh)
+{
+	g_pImmediateContext->VSSetShader(m_pBasicShader->GetVertexShader(), 0, 0);
+	g_pImmediateContext->PSSetShader(m_pBasicShader->GetPixelShader(), 0, 0);
+
+	ID3D11Buffer* vertBuff = mesh->GetVertexBuffer();
+	long vertSize = sizeof(DefaultVertex);
+	UINT stride = vertSize;
+	UINT offset = 0;
+
+	g_pImmediateContext->IASetInputLayout(m_pBasicShader->GetInputLayout());
 	g_pImmediateContext->IASetVertexBuffers(0, 1, &vertBuff, &stride, &offset);
 	g_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
@@ -279,14 +376,12 @@ void Direct3D::UpdateWindow(int w, int h)
 
 	g_pImmediateContext->OMSetRenderTargets(1, &g_pBackBufferRTView, g_pZBuffer);
 
-	D3D11_VIEWPORT vp;
-	vp.Width = w;
-	vp.Height = h;
-	vp.MinDepth = 0.f;
-	vp.MaxDepth = 1.f;
-	vp.TopLeftX = 0;
-	vp.TopLeftY = 0;
-	g_pImmediateContext->RSSetViewports(1, &vp);
+	viewport.Width = w;
+	viewport.Height = h;
+	viewport.MinDepth = 0.f;
+	viewport.MaxDepth = 1.f;
+	viewport.TopLeftX = 0;
+	viewport.TopLeftY = 0;
 }
 
 void Direct3D::LoadScene(std::string sceneLoc)
@@ -328,4 +423,10 @@ void Direct3D::ReleaseD3D()
 	if (g_pBackBufferRTView) g_pBackBufferRTView->Release();
 
 	if (g_pZBuffer) g_pZBuffer->Release();
+
+	m_pShadowMap->Release();
+	m_pZShadowBuffer->Release();
+
+	m_pShadowRenderState->Release();
+	m_pDefaultRenderState->Release();
 }

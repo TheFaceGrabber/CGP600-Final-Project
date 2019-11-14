@@ -5,6 +5,7 @@
     <FxCompile Include="BlinnPhong.hlsl" />
     <FxCompile Include="Skybox.hlsl" />
     <FxCompile Include="text2D_shaders.hlsl" />
+    <FxCompile Include="Unlit.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

@@ -10,6 +10,7 @@ private:
 	const std::string VSFunc = "vert";
 
 	ID3D11SamplerState* g_pDefaultSampler;
+	ID3D11SamplerState* g_pShadowsSampler;
 
 	ID3D11VertexShader* g_pVertexShader;
 	ID3D11PixelShader* g_pPixelShader;

@@ -14,5 +14,6 @@ public:
 	Mesh* GetMesh() { return m_pMesh; }
 
 	void UpdateGfx() override;
+	void UpdateShadowMap() override;
 };
 

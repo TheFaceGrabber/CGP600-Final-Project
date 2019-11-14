@@ -56,4 +56,5 @@ public:
 
 	void Update();
 	void UpdateGfx();
+	void UpdateShadowMap();
 };

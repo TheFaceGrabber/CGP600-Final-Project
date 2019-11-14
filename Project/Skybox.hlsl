@@ -6,8 +6,7 @@ cbuffer Properties : register(b2)
     float2 Padding;
 };
 
-TextureCube SkyTex : register(t0);
-sampler Sampler : register(s0);
+TextureCube SkyTex : register(t1);
 
 struct VIn
 {

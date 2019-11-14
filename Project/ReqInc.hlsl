@@ -12,11 +12,15 @@ cbuffer CBuffer1 : register(b1)
 {
     matrix WVP;
     matrix World;
+
+	matrix DirLightView;
+	matrix DirLightProjection;
 };
 
-//Refernce specular for non-metals
-//0.22  0 - 1
-//51    0 -255
+sampler Sampler : register(s0);
+SamplerComparisonState  ShadowsSampler : register(s1);
+
+Texture2D ShadowMapTex : register(t0);
 
 float3 FixNormal(float4 packednormal)
 {

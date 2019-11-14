@@ -16,3 +16,7 @@ void Component::Update()
 void Component::UpdateGfx()
 {
 }
+
+void Component::UpdateShadowMap()
+{
+}

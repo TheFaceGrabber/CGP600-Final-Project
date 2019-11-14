@@ -54,6 +54,28 @@ Shader::Shader(std::string shaderFilePath)
 	Direct3D::GetInstance()->GetDevice()->CreateSamplerState(&sampler_desc, &g_pDefaultSampler);
 
 	Direct3D::GetInstance()->GetContext()->PSSetSamplers(0, 1, &g_pDefaultSampler);
+#pragma endregion
+
+#pragma region Init Shadows Sampler
+	sampler_desc;
+	ZeroMemory(&sampler_desc, sizeof(sampler_desc));
+	sampler_desc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+	sampler_desc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+	sampler_desc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+	sampler_desc.BorderColor[0] = 1.0f;
+	sampler_desc.BorderColor[1] = 1.0f;
+	sampler_desc.BorderColor[2] = 1.0f;
+	sampler_desc.BorderColor[3] = 1.0f;
+	sampler_desc.MinLOD = 0.f;
+	sampler_desc.MaxLOD = D3D11_FLOAT32_MAX;
+	sampler_desc.MipLODBias = 0.f;
+	sampler_desc.MaxAnisotropy = 0;
+	sampler_desc.ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL;
+	sampler_desc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_MIP_POINT;
+
+	Direct3D::GetInstance()->GetDevice()->CreateSamplerState(&sampler_desc, &g_pShadowsSampler);
+
+	Direct3D::GetInstance()->GetContext()->PSSetSamplers(1, 1, &g_pShadowsSampler);
 #pragma endregion 
 }
 
@@ -82,7 +104,7 @@ void Shader::ApplyTexture(std::string textureLocation, int index)
 	}
 
 	D3DX11CreateShaderResourceViewFromFile(Direct3D::GetInstance()->GetDevice(), textureLocation.c_str(), NULL, NULL, &g_pTextures[index], NULL);
-	Direct3D::GetInstance()->GetContext()->PSSetShaderResources(index, 1, &g_pTextures[index]);
+	Direct3D::GetInstance()->GetContext()->PSSetShaderResources(index + 1, 1, &g_pTextures[index]);
 }
 
 void* Shader::GetData()
@@ -107,10 +129,11 @@ void Shader::Update()
 	SetData(data);
 
 	Direct3D::GetInstance()->GetContext()->PSSetSamplers(0, 1, &g_pDefaultSampler);
+	Direct3D::GetInstance()->GetContext()->PSSetSamplers(1, 1, &g_pShadowsSampler);
 
 	for (int i = 0; i < g_pTextures.size(); i++)
 	{
-		Direct3D::GetInstance()->GetContext()->PSSetShaderResources(i, 1, &g_pTextures[i]);
+		Direct3D::GetInstance()->GetContext()->PSSetShaderResources(i + 1, 1, &g_pTextures[i]);
 	}
 }
 

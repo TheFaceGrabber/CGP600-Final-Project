@@ -79,6 +79,14 @@ void GameObject::UpdateGfx()
 	}
 }
 
+void GameObject::UpdateShadowMap()
+{
+	for (int i = 0; i < m_vComponents.size(); i++)
+	{
+		m_vComponents[i]->UpdateShadowMap();
+	}
+}
+
 Component* GameObject::AddComponent(Component* comp)
 {
 	comp->SetOwner(this);
