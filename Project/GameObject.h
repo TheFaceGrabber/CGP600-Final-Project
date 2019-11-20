@@ -18,9 +18,18 @@ private:
 	XMFLOAT3 m_scale;
 	XMMATRIX m_rotationQuat;
 	std::vector<Component*> m_vComponents;
+	//New design
+	GameObject* m_parent;
+
+	XMFLOAT3 GetWorldRotation();
+
 public:
 	GameObject(std::string name);
 	~GameObject();
+
+	//New design
+	void SetParent(GameObject* go);
+	GameObject* GetParent();
 
 	std::string GetName() { return m_name; }
 	void SetName(std::string name) { m_name = name; }
