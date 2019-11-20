@@ -146,6 +146,7 @@
   <ItemGroup>
     <ClCompile Include="BoundingBoxCollider.cpp" />
     <ClCompile Include="PhysicsComponent.cpp" />
+    <ClCompile Include="ShadowMap.cpp" />
     <ClCompile Include="text2D.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Component.cpp" />
@@ -192,6 +193,7 @@
   <ItemGroup>
     <ClInclude Include="BoundingBoxCollider.h" />
     <ClInclude Include="PhysicsComponent.h" />
+    <ClInclude Include="ShadowMap.h" />
     <ClInclude Include="text2D.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Component.h" />

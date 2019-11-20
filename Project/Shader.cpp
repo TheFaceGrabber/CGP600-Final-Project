@@ -71,7 +71,7 @@ Shader::Shader(std::string shaderFilePath)
 	sampler_desc.MipLODBias = 0.f;
 	sampler_desc.MaxAnisotropy = 0;
 	sampler_desc.ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL;
-	sampler_desc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_MIP_POINT;
+	sampler_desc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR;
 
 	Direct3D::GetInstance()->GetDevice()->CreateSamplerState(&sampler_desc, &g_pShadowsSampler);
 

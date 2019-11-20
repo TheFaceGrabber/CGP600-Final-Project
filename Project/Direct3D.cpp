@@ -17,6 +17,7 @@
 #include "Skybox.h"
 #include "GUI.h"
 
+//Double ended queue for particles
 
 using namespace std::chrono;
 
@@ -33,6 +34,7 @@ Direct3D::~Direct3D()
 	//delete m;
 	UnloadCurrentScene();
 	delete m_pBasicShader;
+	delete m_pShadowMap;
 	ConstantBuffers::Release();
 	Input::Release();
 	GUI::Release();
@@ -155,70 +157,19 @@ HRESULT Direct3D::InitialiseD3D(HWND hWnd, HINSTANCE hInst)
 
 	g_pImmediateContext->RSSetViewports(1, &viewport);
 
-	//TODO move this all to a class
-	//Create shadowmap
-	D3D11_TEXTURE2D_DESC shadowMapDesc;
-	ZeroMemory(&shadowMapDesc, sizeof(D3D11_TEXTURE2D_DESC));
-	shadowMapDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
-	shadowMapDesc.MipLevels = 1;
-	shadowMapDesc.ArraySize = 1;
-	shadowMapDesc.SampleDesc.Count = 1;
-	shadowMapDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_DEPTH_STENCIL;
-	shadowMapDesc.Height = 2048;
-	shadowMapDesc.Width = 2048;
-
-	ID3D11Texture2D* pShadowMap;
-	hr = g_pD3DDevice->CreateTexture2D(&shadowMapDesc,nullptr,&pShadowMap);
-
-	D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
-	ZeroMemory(&depthStencilViewDesc, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
-	depthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-	depthStencilViewDesc.Texture2D.MipSlice = 0;
-
-	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
-	ZeroMemory(&shaderResourceViewDesc, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
-	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	shaderResourceViewDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
-	shaderResourceViewDesc.Texture2D.MipLevels = 1;
-
-	hr = g_pD3DDevice->CreateDepthStencilView(
-		pShadowMap,
-		&depthStencilViewDesc,
-		&m_pZShadowBuffer
-	);
-
-	hr = g_pD3DDevice->CreateShaderResourceView(
-		pShadowMap,
-		&shaderResourceViewDesc,
-		&m_pShadowMap
-	);
-	pShadowMap->Release();
-
-	ZeroMemory(&shadowViewport, sizeof(D3D11_VIEWPORT));
-	shadowViewport.Width = (FLOAT)2048;
-	shadowViewport.Height = (FLOAT)2048;
-	shadowViewport.MinDepth = 0.0f;
-	shadowViewport.MaxDepth = 1.0f;
-
 	D3D11_RASTERIZER_DESC shadowRenderStateDesc;
 	ZeroMemory(&shadowRenderStateDesc, sizeof(D3D11_RASTERIZER_DESC));
-	shadowRenderStateDesc.CullMode = D3D11_CULL_FRONT;
 	shadowRenderStateDesc.FillMode = D3D11_FILL_SOLID;
 	shadowRenderStateDesc.DepthClipEnable = true;
 
-	g_pD3DDevice->CreateRasterizerState(
-		&shadowRenderStateDesc,
-		&m_pShadowRenderState
-	);
-
 	shadowRenderStateDesc.CullMode = D3D11_CULL_BACK;
 
-	g_pD3DDevice->CreateRasterizerState(
+	Direct3D::GetInstance()->GetDevice()->CreateRasterizerState(
 		&shadowRenderStateDesc,
 		&m_pDefaultRenderState
 	);
-	//End create shadowmap
+
+	m_pShadowMap = new ShadowMap();
 
 	//Init time
 	double t = (double)duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count() / 1000.0f;
@@ -255,14 +206,8 @@ void Direct3D::RunUpdate()
 
 	m_pScene->Update();
 	float rgba_clear_colour[4] = { 0.4, 0.58, 0.92, 1.0f };
-	//Clear shadowmap
-	g_pImmediateContext->ClearRenderTargetView(g_pBackBufferRTView, rgba_clear_colour);
-	g_pImmediateContext->ClearDepthStencilView(m_pZShadowBuffer, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-	g_pImmediateContext->OMSetRenderTargets(0, nullptr, m_pZShadowBuffer);
-	g_pImmediateContext->RSSetViewports(1, &shadowViewport);
-
-	g_pImmediateContext->RSSetState(m_pShadowRenderState);
+	m_pShadowMap->ClearShadowMap();
 
 	m_pScene->UpdateShadowMap();
 
@@ -295,7 +240,7 @@ void Direct3D::RunUpdate()
 
 void Direct3D::Draw(Mesh* mesh)
 {
-	Direct3D::GetInstance()->GetContext()->PSSetShaderResources(0, 1, &m_pShadowMap);
+	m_pShadowMap->ApplyToShaders();
 
 	g_pImmediateContext->VSSetShader(mesh->GetShader()->GetVertexShader(), 0, 0);
 	g_pImmediateContext->PSSetShader(mesh->GetShader()->GetPixelShader(), 0, 0);
@@ -425,9 +370,5 @@ void Direct3D::ReleaseD3D()
 
 	if (g_pZBuffer) g_pZBuffer->Release();
 
-	m_pShadowMap->Release();
-	m_pZShadowBuffer->Release();
-
-	m_pShadowRenderState->Release();
 	m_pDefaultRenderState->Release();
 }

@@ -58,6 +58,9 @@
     <ClCompile Include="BoundingBoxCollider.cpp">
       <Filter>World\Gameplay\Components\Colliders</Filter>
     </ClCompile>
+    <ClCompile Include="ShadowMap.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Mesh.h">
@@ -108,6 +111,9 @@
     </ClInclude>
     <ClInclude Include="BoundingBoxCollider.h">
       <Filter>World\Gameplay\Components\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowMap.h">
+      <Filter>Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

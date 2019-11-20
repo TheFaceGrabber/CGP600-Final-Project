@@ -3,6 +3,7 @@
 #include <dxgi.h>
 
 #include "Mesh.h"
+#include "ShadowMap.h"
 
 class Scene;
 
@@ -35,11 +36,9 @@ private:
 	Scene*					m_pScene;
 	Shader*					m_pBasicShader;
 
-	ID3D11ShaderResourceView*	m_pShadowMap;
-	ID3D11DepthStencilView*		m_pZShadowBuffer;
-	D3D11_VIEWPORT				shadowViewport;
-	ID3D11RasterizerState*		m_pShadowRenderState;
-	ID3D11RasterizerState*		m_pDefaultRenderState;
+	ShadowMap*				m_pShadowMap;
+
+	ID3D11RasterizerState* m_pDefaultRenderState;
 
 public:
 	Direct3D();
@@ -74,5 +73,5 @@ public:
 
 	ID3D11Device*			GetDevice() { return g_pD3DDevice; }
 	ID3D11DeviceContext*	GetContext() { return g_pImmediateContext; }
+	ID3D11RenderTargetView* GetBackBufferTargetView() { return g_pBackBufferRTView; }
 };
-

@@ -94,30 +94,29 @@ float4 frag(VOut i) : SV_TARGET
 	if ((saturate(shadowTexCoords.x) == shadowTexCoords.x) &&
 		(saturate(shadowTexCoords.y) == shadowTexCoords.y))
 	{
-        float bias = 0.0001 * tan(acos(ndl));
-		// Clamp epsilon to a fixed range so it doesn't go overboard.
-        bias = clamp(bias, 0, 0.01);
-        
-        float2 poissonDisk[4];
-        poissonDisk[0] = float2(-0.94201624, -0.39906216);
-        poissonDisk[1] = float2(0.94558609, -0.76890725);
-        poissonDisk[2] = float2(-0.094184101, -0.92938870);
-        poissonDisk[3] = float2(0.34495938, 0.29387760);
-        
-        int interations = 4;
+		float bias = 0.0000001;
 
-        for (int i = 0; i < interations; i++)
-        {
-            float d = ShadowMapTex.SampleCmpLevelZero(ShadowsSampler, shadowTexCoords.xy + poissonDisk[i] / 700, pixelDepth - bias).x;
-            lighting += d;
-        }
-        lighting /= interations;
-        
-        //if (lighting < pixelDepth - bias)
-        //    ndl = 0;
-        ndl *= lighting;
+		//PCF blur: http://codeflow.org/entries/2013/feb/15/soft-shadow-mapping/
 
-    }
+		float result = 0;
+		float width = 0;
+		float height = 0;
+		ShadowMapTex.GetDimensions(width, height);
+		float mapSize = width;
+
+		for (int x = -2; x <= 2; x++)
+		{
+			for (int y = -2; y <= 2; y++)
+			{
+				float2 off = float2(x, y) / mapSize;
+				result += ShadowMapTex.SampleCmpLevelZero(ShadowsSampler, shadowTexCoords.xy + off, pixelDepth - bias).x;
+			}
+		}
+
+		lighting = result / 25.0f;
+
+		ndl *= lighting;
+	}
 
     float smoothness = specTex.a * Smoothness;
     float3 viewDir = normalize(WorldCameraPosition - worldPos.xyz);
