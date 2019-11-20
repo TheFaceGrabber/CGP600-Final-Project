@@ -285,19 +285,22 @@ Scene* Scene::LoadFromFile(std::string file)
 		{
 			if (caption.empty())
 			{
+				//Create player object
 				playerObj = new GameObject("Player");
-				playerObj->AddComponent(new PhysicsComponent());
 				playerObj->AddComponent(new FirstPersonPlayer());
 
+				BoundingBoxCollider* col = (BoundingBoxCollider*)playerObj->AddComponent(new BoundingBoxCollider());
+				col->SetWidth(.5);
+				col->SetHeight(1);
+				playerObj->AddComponent(new PhysicsComponent());
+
+				//Create camera object
 				GameObject* cam = new GameObject("Camera");
 				Camera::SetMain(cam);
 				cam->SetParent(playerObj);
 				cam->SetPosition({ 0,1,0 });
 
-				BoundingBoxCollider* col = (BoundingBoxCollider*)playerObj->AddComponent(new BoundingBoxCollider());
-				col->SetWidth(.5);
-				col->SetHeight(1);
-				//col->SetCentre({ 0,-.5,0 });
+				//Register both
 				scene->RegisterGameObject(playerObj);
 				scene->RegisterGameObject(cam);
 			}
