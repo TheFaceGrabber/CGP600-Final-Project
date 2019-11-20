@@ -21,8 +21,6 @@ private:
 	//New design
 	GameObject* m_parent;
 
-	XMFLOAT3 GetWorldRotation();
-
 public:
 	GameObject(std::string name);
 	~GameObject();
@@ -31,10 +29,13 @@ public:
 	void SetParent(GameObject* go);
 	GameObject* GetParent();
 
+	XMFLOAT3 GetWorldRotation();
+	XMFLOAT3 GetWorldPosition();
+
 	std::string GetName() { return m_name; }
 	void SetName(std::string name) { m_name = name; }
-	XMFLOAT3 GetPosition() { return m_position; }
-	XMFLOAT3 GetRotation() { return m_rotation; }
+	XMFLOAT3 GetLocalPosition() { return m_position; }
+	XMFLOAT3 GetLocalRotation() { return m_rotation; }
 	XMFLOAT3 GetScale() { return m_scale; }
 
 	XMMATRIX GetWorldMatrix();

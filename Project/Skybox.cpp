@@ -39,7 +39,7 @@ void Skybox::UpdateGfx()
 	Direct3D::GetInstance()->GetContext()->OMSetDepthStencilState(m_pSkyboxDepth, 2);
 
 	TransformationBuffer m_transBuffer;
-	XMFLOAT3 camPos = Camera::GetMain()->GetPosition();
+	XMFLOAT3 camPos = Camera::GetMain()->GetWorldPosition();
 	m_transBuffer.World = XMMatrixScaling(Camera::GetFarPlane()/2, Camera::GetFarPlane()/2, Camera::GetFarPlane()/2) * XMMatrixTranslation(camPos.x, camPos.y, camPos.z);
 	m_transBuffer.WorldViewProjection = m_transBuffer.World * Camera::GetViewMatrix() * Camera::GetProjectionMatrix();
 

@@ -1,21 +1,15 @@
-#include "FlyCamera.h"
-#include "Input.h"
+#include "FirstPersonPlayer.h"
 #include "GameObject.h"
+#include "Input.h"
 #include "Direct3D.h"
 #include <xnamath.h>
 #include "Camera.h"
-#include "DirectionLight.h"
-#include "Scene.h"
-#include "GUI.h"
 
-void FlyCamera::Start()
+void FirstPersonPlayer::Start()
 {
-	Camera::SetMain(m_owner);
-
-	m_owner->SetPosition({ 0,0,-1 });
 }
 
-void FlyCamera::Update()
+void FirstPersonPlayer::Update()
 {
 	if (!m_pPhysComp)
 	{
@@ -30,11 +24,10 @@ void FlyCamera::Update()
 		mouse.y *= m_mouseSens;
 
 		XMFLOAT3 newRot = m_owner->GetWorldRotation();
-		newRot.x += mouse.y;
 		newRot.y += mouse.x;
 		m_owner->SetRotation(newRot);
 
-		XMFLOAT3 newVel = {0,0,0};
+		XMFLOAT3 newVel = { 0,0,0 };
 
 		if (Input::GetInstance()->IsKeyPressed(DIK_W))
 		{
@@ -63,13 +56,12 @@ void FlyCamera::Update()
 			newVel.z += -right.z * moveSpeed * Direct3D::GetInstance()->GetDeltaTime();
 		}
 
-		if (Input::GetInstance()->IsKeyPressed(DIK_SPACE))
-		{
-			newVel.y = 0.001;
-		}
-
 		XMFLOAT3 physVel = m_pPhysComp->GetVelocity();
 		newVel.y += physVel.y;
 		m_pPhysComp->SetVelocity(newVel);
+
+		XMFLOAT3 cameraRot = Camera::GetMain()->GetLocalRotation();
+		cameraRot.x += mouse.y;
+		Camera::GetMain()->SetRotation(cameraRot);
 	}
 }

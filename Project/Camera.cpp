@@ -34,7 +34,7 @@ void Camera::SetFov(float fov)
 
 XMMATRIX Camera::GetViewMatrix()
 {
-	XMVECTOR pos = { m_pMain->GetPosition().x,m_pMain->GetPosition().y,m_pMain->GetPosition().z };
+	XMVECTOR pos = { m_pMain->GetWorldPosition().x,m_pMain->GetWorldPosition().y,m_pMain->GetWorldPosition().z };
 	XMVECTOR forward = { m_pMain->GetForward().x,m_pMain->GetForward().y,m_pMain->GetForward().z };
 	XMVECTOR up = { m_pMain->GetUp().x,m_pMain->GetUp().y,m_pMain->GetUp().z };
 	return XMMatrixLookToLH(pos, forward, up);

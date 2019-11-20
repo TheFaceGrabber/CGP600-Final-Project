@@ -15,7 +15,7 @@ void BoundingBoxCollider::Update()
 	}
 	else
 	{
-		XMFLOAT3 colliderCentrePos = {GetOwner()->GetPosition().x + m_Centre.x, GetOwner()->GetPosition().y + m_Centre.y, GetOwner()->GetPosition().z + m_Centre.z };
+		XMFLOAT3 colliderCentrePos = {GetOwner()->GetWorldPosition().x + m_Centre.x, GetOwner()->GetWorldPosition().y + m_Centre.y, GetOwner()->GetWorldPosition().z + m_Centre.z };
 		XMFLOAT3 startingVelocity = m_pPhysComp->GetVelocity();
 
 #pragma region CheckDown

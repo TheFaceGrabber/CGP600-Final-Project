@@ -15,8 +15,17 @@ XMFLOAT3 GameObject::GetWorldRotation()
 {
 	XMFLOAT3 worldRot = { m_rotation.x,m_rotation.y,m_rotation.z };
 	if (m_parent)
-		worldRot = { m_parent->GetRotation().x + m_rotation.x , m_parent->GetRotation().y + m_rotation.y ,m_parent->GetRotation().z + m_rotation.z };
+		worldRot = { m_parent->GetLocalRotation().x + m_rotation.x , m_parent->GetLocalRotation().y + m_rotation.y ,m_parent->GetLocalRotation().z + m_rotation.z };
 	return worldRot;
+}
+
+XMFLOAT3 GameObject::GetWorldPosition()
+{
+	XMFLOAT3 worldPos = { m_position.x, m_position.y, m_position.z };
+	if (m_parent) {
+		worldPos = { m_parent->GetLocalPosition().x + m_position.x , m_parent->GetLocalPosition().y + m_position.y, m_parent->GetLocalPosition().z + m_position.z };
+	}
+	return worldPos;
 }
 
 GameObject::GameObject(std::string name)
@@ -49,9 +58,7 @@ XMMATRIX GameObject::GetWorldMatrix()
 	XMFLOAT3 worldRot = GetWorldRotation();
 	m_rotationQuat = XMMatrixRotationRollPitchYaw(XMConvertToRadians(worldRot.x), XMConvertToRadians(worldRot.y), XMConvertToRadians(worldRot.z));
 
-	XMFLOAT3 worldPos = { m_position.x, m_position.y, m_position.z };
-	if (m_parent)
-		worldPos = { m_parent->GetPosition().x + m_position.x , m_parent->GetPosition().y + m_position.y ,m_parent->GetPosition().z + m_position.z };
+	XMFLOAT3 worldPos = GetWorldPosition();
 
 	XMMATRIX trans = XMMatrixTranslation(worldPos.x, worldPos.y, worldPos.z);
 	XMMATRIX rot = m_rotationQuat;

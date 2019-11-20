@@ -194,7 +194,7 @@ void Direct3D::RunUpdate()
 
 	LightingBuffer lightBuff;
 
-	Sleep(0.5f);
+	Sleep(1.0f);
 	double t = (double)duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count() / 1000.0f;
 
 	double diff = t - m_lastTimeSample;
@@ -222,7 +222,7 @@ void Direct3D::RunUpdate()
 	GUI::GetInstance()->DrawGUIText("100%", .6, -.9, .1);
 
 	if(Camera::GetMain())
-		lightBuff.CameraPosition = Camera::GetMain()->GetPosition();
+		lightBuff.CameraPosition = Camera::GetMain()->GetWorldPosition();
 
 	if (DirectionLight::GetMainLight()) 
 	{

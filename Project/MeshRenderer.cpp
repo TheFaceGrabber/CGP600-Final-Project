@@ -16,9 +16,9 @@ void MeshRenderer::UpdateGfx()
 	TransformationBuffer m_transBuffer;
 
 	XMVECTOR pos = { 
-		Camera::GetMain()->GetPosition().x + DirectionLight::GetMainLight()->GetOwner()->GetForward().x * -50,
-		Camera::GetMain()->GetPosition().y + DirectionLight::GetMainLight()->GetOwner()->GetForward().y * -50,
-		Camera::GetMain()->GetPosition().z + DirectionLight::GetMainLight()->GetOwner()->GetForward().z * -50
+		Camera::GetMain()->GetWorldPosition().x + DirectionLight::GetMainLight()->GetOwner()->GetForward().x * -50,
+		Camera::GetMain()->GetWorldPosition().y + DirectionLight::GetMainLight()->GetOwner()->GetForward().y * -50,
+		Camera::GetMain()->GetWorldPosition().z + DirectionLight::GetMainLight()->GetOwner()->GetForward().z * -50
 	};
 
 	XMVECTOR forward = { DirectionLight::GetMainLight()->GetOwner()->GetForward().x,
@@ -46,9 +46,9 @@ void MeshRenderer::UpdateShadowMap()
 	m_transBuffer.World = m_owner->GetWorldMatrix();
 
 	XMVECTOR pos = {
-		Camera::GetMain()->GetPosition().x + DirectionLight::GetMainLight()->GetOwner()->GetForward().x * -50,
-		Camera::GetMain()->GetPosition().y + DirectionLight::GetMainLight()->GetOwner()->GetForward().y * -50,
-		Camera::GetMain()->GetPosition().z + DirectionLight::GetMainLight()->GetOwner()->GetForward().z * -50
+		Camera::GetMain()->GetWorldPosition().x + DirectionLight::GetMainLight()->GetOwner()->GetForward().x * -50,
+		Camera::GetMain()->GetWorldPosition().y + DirectionLight::GetMainLight()->GetOwner()->GetForward().y * -50,
+		Camera::GetMain()->GetWorldPosition().z + DirectionLight::GetMainLight()->GetOwner()->GetForward().z * -50
 	};
 
 	XMVECTOR forward = { 

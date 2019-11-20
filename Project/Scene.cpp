@@ -7,6 +7,8 @@
 #include "MeshRenderer.h"
 #include "PhysicsComponent.h"
 #include "BoundingBoxCollider.h"
+#include "Camera.h"
+#include "FirstPersonPlayer.h"
 
 Scene::Scene()
 {
@@ -285,12 +287,19 @@ Scene* Scene::LoadFromFile(std::string file)
 			{
 				playerObj = new GameObject("Player");
 				playerObj->AddComponent(new PhysicsComponent());
-				playerObj->AddComponent(new FlyCamera());
+				playerObj->AddComponent(new FirstPersonPlayer());
+
+				GameObject* cam = new GameObject("Camera");
+				Camera::SetMain(cam);
+				cam->SetParent(playerObj);
+				cam->SetPosition({ 0,1,0 });
+
 				BoundingBoxCollider* col = (BoundingBoxCollider*)playerObj->AddComponent(new BoundingBoxCollider());
 				col->SetWidth(.5);
 				col->SetHeight(1);
 				//col->SetCentre({ 0,-.5,0 });
 				scene->RegisterGameObject(playerObj);
+				scene->RegisterGameObject(cam);
 			}
 			else if (caption == "Rotation")
 			{
