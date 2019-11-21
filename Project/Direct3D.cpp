@@ -171,8 +171,6 @@ HRESULT Direct3D::InitialiseD3D(HWND hWnd, HINSTANCE hInst)
 
 	m_pShadowMap = new ShadowMap();
 
-	//Init time
-	//double t = (double)duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count() / 1000.0f;
 	m_lastTimeSample = 0;
 
 	m_pBasicShader = new Shader("Unlit.hlsl");
@@ -199,11 +197,13 @@ void Direct3D::RunUpdate()
 
 	double diff = t - m_lastTimeSample;
 
+	//If first frame, make sure delta time is 0 otherwise gravity will break
 	if (m_lastTimeSample != 0) 
 	{
 		m_deltaTime = diff;
 	}
-	else {
+	else 
+	{
 		m_deltaTime = 0;
 	}
 

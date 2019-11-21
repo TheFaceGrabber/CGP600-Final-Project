@@ -387,16 +387,13 @@ Scene* Scene::LoadFromFile(std::string file)
 				}
 				else if (comp == "BoxCollider")
 				{
-					//TODO FIX THIS
-					int width = 100;
-					int height = 100;
-					s >> width;
-					s >> height;
-					OutputDebugString(("WIDTH AND HEIGHT: " + std::to_string(width) + " " + std::to_string(height) + "\n").c_str());
+					float width;
+					float height;
+					s >> width >> height;
 					int last = scene->m_vGameObjects.size() - 1;
 					BoundingBoxCollider* r = (BoundingBoxCollider*)scene->m_vGameObjects[last]->AddComponent(new BoundingBoxCollider());
-					r->SetWidth(.5);
-					r->SetHeight(1);
+					r->SetWidth(width);
+					r->SetHeight(height);
 				}
 			}
 		}

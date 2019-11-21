@@ -42,13 +42,13 @@ End
 
 Entity
 Name Floor
-Position 35 15 40 
+Position 35 15 40
 Rotation 0 0 0
 Component MeshRenderer Assets\Models\Capsule.obj Assets\Materials\Bricks24.jmtl
-Component BoxCollider 0.5 1
 Component PhysicsComponent
+Component BoxCollider 0.5 1
 End
-~
+
 ~Entity
 ~Name Evil-Pigeon-1
 ~Position -2 0 3 
