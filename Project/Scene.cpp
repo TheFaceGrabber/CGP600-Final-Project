@@ -503,7 +503,7 @@ void Scene::SetSky(string material)
 bool Scene::CheckForVoxel(XMFLOAT3 pos)
 {
 	int posX = floor((pos.x / m_Scale) + 0.5);
-	int posY = ceil(pos.y);// floor((pos.y / m_Scale));
+	float posY = (pos.y);// floor((pos.y / m_Scale));
 	int posZ = floor((pos.z / m_Scale) + 0.5);
 
 	Block block;
