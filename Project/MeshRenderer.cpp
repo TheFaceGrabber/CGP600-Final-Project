@@ -30,7 +30,7 @@ void MeshRenderer::UpdateGfx()
 		DirectionLight::GetMainLight()->GetOwner()->GetUp().z };
 
 	XMMATRIX lightViewMat = XMMatrixLookToLH(pos, forward, up);
-	XMMATRIX lightProjMat = XMMatrixOrthographicLH(80, 80, 30, 80);
+	XMMATRIX lightProjMat = XMMatrixOrthographicLH(80, 80, 5, 80);
 
 	m_transBuffer.DirLightWVP = m_owner->GetWorldMatrix() * lightViewMat * lightProjMat;
 	m_transBuffer.World = m_owner->GetWorldMatrix();
@@ -62,7 +62,7 @@ void MeshRenderer::UpdateShadowMap()
 		DirectionLight::GetMainLight()->GetOwner()->GetUp().z };
 
 	XMMATRIX lightViewMat = XMMatrixLookToLH(pos, forward, up);
-	XMMATRIX lightProjMat = XMMatrixOrthographicLH(80, 80, 30, 80);
+	XMMATRIX lightProjMat = XMMatrixOrthographicLH(80, 80, 5, 80);
 	m_transBuffer.WorldViewProjection = m_owner->GetWorldMatrix() * lightViewMat * lightProjMat;
 
 	m_transBuffer.DirLightWVP = m_owner->GetWorldMatrix() * lightViewMat * lightProjMat;
