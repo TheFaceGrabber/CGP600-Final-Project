@@ -172,8 +172,8 @@ HRESULT Direct3D::InitialiseD3D(HWND hWnd, HINSTANCE hInst)
 	m_pShadowMap = new ShadowMap();
 
 	//Init time
-	double t = (double)duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count() / 1000.0f;
-	m_lastTimeSample = t;
+	//double t = (double)duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count() / 1000.0f;
+	m_lastTimeSample = 0;
 
 	m_pBasicShader = new Shader("Unlit.hlsl");
 
@@ -199,7 +199,14 @@ void Direct3D::RunUpdate()
 
 	double diff = t - m_lastTimeSample;
 
-	m_deltaTime = diff;
+	if (m_lastTimeSample != 0) 
+	{
+		m_deltaTime = diff;
+	}
+	else {
+		m_deltaTime = 0;
+	}
+
 	m_lastTimeSample = t;
 	m_time += m_deltaTime;
 	m_fps = 1.0f / m_deltaTime;

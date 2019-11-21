@@ -3,7 +3,6 @@
 
 ShadowMap::ShadowMap()
 {
-	//TODO move this all to a class
 	//Create shadowmap
 	D3D11_TEXTURE2D_DESC shadowMapDesc;
 	ZeroMemory(&shadowMapDesc, sizeof(D3D11_TEXTURE2D_DESC));

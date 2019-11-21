@@ -57,7 +57,7 @@ void FirstPersonPlayer::Update()
 		}
 
 		XMFLOAT3 physVel = m_pPhysComp->GetVelocity();
-		newVel.y += physVel.y;
+		newVel.y = physVel.y;
 		m_pPhysComp->SetVelocity(newVel);
 
 		XMFLOAT3 cameraRot = Camera::GetMain()->GetLocalRotation();

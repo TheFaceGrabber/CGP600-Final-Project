@@ -17,6 +17,7 @@ void FlyCamera::Start()
 
 void FlyCamera::Update()
 {
+	/*
 	if (!m_pPhysComp)
 	{
 		m_pPhysComp = GetOwner()->GetComponent<PhysicsComponent>();
@@ -71,5 +72,5 @@ void FlyCamera::Update()
 		XMFLOAT3 physVel = m_pPhysComp->GetVelocity();
 		newVel.y += physVel.y;
 		m_pPhysComp->SetVelocity(newVel);
-	}
+	}*/
 }

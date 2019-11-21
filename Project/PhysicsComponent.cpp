@@ -25,12 +25,16 @@ bool PhysicsComponent::GetUseGravity()
 void PhysicsComponent::Update()
 {
 	XMFLOAT3 curPos = GetOwner()->GetWorldPosition();
+
 	curPos.x += m_Velocity.x;
 	curPos.y += m_Velocity.y;
 	curPos.z += m_Velocity.z;
 
 	GetOwner()->SetPosition(curPos);
 
+	m_UseGravity = true;
+
 	if (m_UseGravity)
 		m_Velocity.y += (GRAVITY * Direct3D::GetInstance()->GetDeltaTime()) * Direct3D::GetInstance()->GetDeltaTime();
+
 }

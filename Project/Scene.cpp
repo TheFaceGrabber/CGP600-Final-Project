@@ -298,11 +298,22 @@ Scene* Scene::LoadFromFile(std::string file)
 				GameObject* cam = new GameObject("Camera");
 				Camera::SetMain(cam);
 				cam->SetParent(playerObj);
-				cam->SetPosition({ 0,1,0 });
+				cam->SetPosition({ 0,0.8,0 });
+
+				GameObject* mesh = new GameObject("Capsule");
+				mesh->SetParent(playerObj);
+				mesh->SetPosition({ 0, 0, 0 });
+				MeshRenderer* r = (MeshRenderer*)mesh->AddComponent(new MeshRenderer());
+				Mesh* m = new Mesh();
+				m->LoadFromFile("Assets/Models/Capsule.obj");
+				m->UpdateMaterial("Assets/Materials/Bricks24.jmtl");
+				r->SetMesh(m);
+
 
 				//Register both
 				scene->RegisterGameObject(playerObj);
 				scene->RegisterGameObject(cam);
+				scene->RegisterGameObject(mesh);
 			}
 			else if (caption == "Rotation")
 			{
@@ -368,6 +379,24 @@ Scene* Scene::LoadFromFile(std::string file)
 					m->LoadFromFile(mesh);
 					m->UpdateMaterial(mat);
 					r->SetMesh(m);
+				}
+				else if (comp == "PhysicsComponent")
+				{
+					int last = scene->m_vGameObjects.size() - 1;
+					scene->m_vGameObjects[last]->AddComponent(new PhysicsComponent());
+				}
+				else if (comp == "BoxCollider")
+				{
+					//TODO FIX THIS
+					int width = 100;
+					int height = 100;
+					s >> width;
+					s >> height;
+					OutputDebugString(("WIDTH AND HEIGHT: " + std::to_string(width) + " " + std::to_string(height) + "\n").c_str());
+					int last = scene->m_vGameObjects.size() - 1;
+					BoundingBoxCollider* r = (BoundingBoxCollider*)scene->m_vGameObjects[last]->AddComponent(new BoundingBoxCollider());
+					r->SetWidth(.5);
+					r->SetHeight(1);
 				}
 			}
 		}
@@ -474,7 +503,7 @@ void Scene::SetSky(string material)
 bool Scene::CheckForVoxel(XMFLOAT3 pos)
 {
 	int posX = floor((pos.x / m_Scale) + 0.5);
-	int posY = pos.y;// floor((pos.y / m_Scale));
+	int posY = ceil(pos.y);// floor((pos.y / m_Scale));
 	int posZ = floor((pos.z / m_Scale) + 0.5);
 
 	Block block;
