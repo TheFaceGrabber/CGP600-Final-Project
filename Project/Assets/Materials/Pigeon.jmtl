@@ -1,0 +1,11 @@
+shader BlinnPhong
+
+property 1
+property 1
+property 1
+property 1
+property 1
+
+texture Assets\Textures\pigeon.png
+texture Assets\Textures\Pigeon\pigeon_spec.tif
+texture Assets\Textures\Pigeon\pigeon_pigeon.jpg

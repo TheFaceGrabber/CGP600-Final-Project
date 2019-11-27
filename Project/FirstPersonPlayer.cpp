@@ -62,6 +62,13 @@ void FirstPersonPlayer::Update()
 
 		XMFLOAT3 cameraRot = Camera::GetMain()->GetLocalRotation();
 		cameraRot.x += mouse.y;
+
+		if (cameraRot.x > m_maxCameraPitch)
+			cameraRot.x = m_maxCameraPitch;
+
+		if (cameraRot.x < m_minCameraPitch)
+			cameraRot.x = m_minCameraPitch;
+
 		Camera::GetMain()->SetRotation(cameraRot);
 	}
 }

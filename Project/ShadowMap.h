@@ -5,7 +5,7 @@
 class ShadowMap
 {
 private:
-	const int MapSize = 4096;
+	const int MapSize = 2048;
 
 	ID3D11ShaderResourceView* m_pShadowMap;
 	ID3D11DepthStencilView* m_pZShadowBuffer;

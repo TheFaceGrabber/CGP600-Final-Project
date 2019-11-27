@@ -6,7 +6,7 @@ Intensity 1
 End
 
 Player
-Position 35 15 30 
+Position 30 1.1 15 
 Rotation 0 0 0
 End
 
@@ -42,11 +42,11 @@ End
 
 Entity
 Name Floor
-Position 35 15 40
+Position 30 2 16 
 Rotation 0 0 0
-Component MeshRenderer Assets\Models\Capsule.obj Assets\Materials\Bricks24.jmtl
+Component MeshRenderer Assets\Models\Pig.obj Assets\Materials\Pigeon.jmtl
 Component PhysicsComponent
-Component BoxCollider 0.5 1
+Component BoxCollider 0.5 .08
 End
 
 ~Entity
