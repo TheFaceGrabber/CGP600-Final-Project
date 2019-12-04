@@ -73,9 +73,14 @@ float4 frag(VOut i) : SV_TARGET
     i.tangent = normalize(LocalToWorldNormal(i.tangent));
     i.binormal = normalize(LocalToWorldNormal(i.binormal));
 
-    float3 normal = FixNormal(NormalTex.Sample(Sampler, i.uv));
+    float3 normal = FixNormal(NormalTex.Sample(Sampler, i.uv).xyz);
     float3x3 normMat = float3x3(i.tangent, i.binormal, i.normal);
-    normal = normalize(mul(normal, normMat));
+	normal = normalize(mul(normal, normMat));
+
+	//We're using the null_spec.tif meaning don't use a normal map...
+	if (all(NormalTex.Sample(Sampler, i.uv).xyz == float3(1,0,1)))
+		normal = i.normal;
+
     float3 lightDir = -normalize(LightVector);
 
     float4 diffTex = DiffuseTex.Sample(Sampler, i.uv);

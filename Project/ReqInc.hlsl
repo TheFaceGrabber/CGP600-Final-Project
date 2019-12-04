@@ -21,7 +21,7 @@ SamplerComparisonState  ShadowsSampler : register(s1);
 
 Texture2D ShadowMapTex : register(t0);
 
-float3 FixNormal(float4 packednormal)
+float3 FixNormal(float3 packednormal)
 {
     return packednormal * 2 - 1;
 }
