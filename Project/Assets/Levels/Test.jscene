@@ -44,7 +44,7 @@ Entity
 Name Floor
 Position 30 2 16 
 Rotation 0 0 0
-Component MeshRenderer Assets\Models\Pig.obj Assets\Materials\Pigeon.jmtl
+Component MeshRenderer Assets\Models\Pigeon.obj Assets\Materials\Pigeon.jmtl
 Component PhysicsComponent
 Component BoxCollider 0.5 .08
 End
