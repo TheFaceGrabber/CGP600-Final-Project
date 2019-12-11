@@ -1,0 +1,9 @@
+Name 9mm
+Model Assets\Guns\9mm.obj
+ViewPos .1 -.5 .1
+RateOfFire Semi
+MinDamage 20
+MaxDamage 33
+MinRange 5
+MaxRange 20
+TotalRange 50

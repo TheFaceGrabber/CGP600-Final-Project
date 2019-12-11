@@ -8,6 +8,7 @@ End
 Player
 Position 30 1.1 15 
 Rotation 0 0 0
+Weapon Assets/Guns/Pistol.gun
 End
 
 Skybox
@@ -66,31 +67,3 @@ Component MeshRenderer Assets\Models\Pigeon.obj Assets\Materials\Pigeon.jmtl
 Component PhysicsComponent
 Component BoxCollider 0.5 .08
 End
-
-~Entity
-~Name Evil-Pigeon-1
-~Position -2 0 3 
-~Rotation 0 0 0
-~Component MeshRenderer Assets\Models\Sphere.obj Assets\Materials\Tiles.jmtl
-~End
-~
-~Entity
-~Name Evil-Pigeon
-~Position 2 0 3 
-~Rotation 0 0 0
-~Component MeshRenderer Assets\Models\Sphere.obj Assets\Materials\Hardwood_Floor.jmtl
-~End
-~
-~Entity
-~Name Evil-Pigeon-2
-~Position 6 0 3 
-~Rotation 0 0 0
-~Component MeshRenderer Assets\Models\Sphere.obj Assets\Materials\Wood30.jmtl
-~End
-~
-~Entity
-~Name Evil-Pigeon-3
-~Position -6 0 3 
-~Rotation 0 0 0
-~Component MeshRenderer Assets\Models\Sphere.obj Assets\Materials\Metal07.jmtl
-~End

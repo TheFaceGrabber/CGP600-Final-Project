@@ -290,7 +290,7 @@ Scene* Scene::LoadFromFile(std::string file)
 				playerObj->AddComponent(new FirstPersonPlayer());
 
 				BoundingBoxCollider* col = (BoundingBoxCollider*)playerObj->AddComponent(new BoundingBoxCollider());
-				col->SetWidth(.5);
+				col->SetWidth(.25);
 				col->SetHeight(1);
 				playerObj->AddComponent(new PhysicsComponent());
 
@@ -306,7 +306,7 @@ Scene* Scene::LoadFromFile(std::string file)
 				MeshRenderer* r = (MeshRenderer*)mesh->AddComponent(new MeshRenderer());
 				Mesh* m = new Mesh();
 				m->LoadFromFile("Assets/Models/Capsule.obj");
-				m->UpdateMaterial("Assets/Materials/Bricks24.jmtl");
+				m->UpdateMaterial("Assets/Materials/Pigeon_Evil.jmtl");
 				r->SetMesh(m);
 
 
@@ -326,6 +326,21 @@ Scene* Scene::LoadFromFile(std::string file)
 				float x, y, z;
 				s >> x >> y >> z;
 				playerObj->SetPosition({ x,y,z });
+			}
+			else if (caption == "Weapon")
+			{
+				string gun;
+				s >> gun;
+				GameObject* gunObj = new GameObject("Gun");
+				gunObj->SetParent(Camera::GetMain());
+				gunObj->SetPosition({ .3, -.5, 1 });
+				gunObj->SetRotation({ 0, 90, 0 });
+				MeshRenderer* r = (MeshRenderer*)gunObj->AddComponent(new MeshRenderer());
+				Mesh* m = new Mesh();
+				m->LoadFromFile("Assets/Models/Guns/9mm.obj");
+				m->UpdateMaterial("Assets/Materials/Pigeon_Evil.jmtl");
+				r->SetMesh(m);
+				scene->RegisterGameObject(gunObj);
 			}
 		}
 		else if (fileCurSection == "Entity")

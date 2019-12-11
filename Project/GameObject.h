@@ -16,10 +16,11 @@ private:
 	XMFLOAT3 m_position;
 	XMFLOAT3 m_rotation;
 	XMFLOAT3 m_scale;
-	XMMATRIX m_rotationQuat;
+	XMMATRIX m_worldMatrix;
 	std::vector<Component*> m_vComponents;
 	//New design
 	GameObject* m_parent;
+	void UpdateWorldMat();
 
 public:
 	GameObject(std::string name);

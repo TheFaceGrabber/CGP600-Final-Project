@@ -15,7 +15,7 @@ XMFLOAT3 GameObject::GetWorldRotation()
 {
 	XMFLOAT3 worldRot = { m_rotation.x,m_rotation.y,m_rotation.z };
 	if (m_parent)
-		worldRot = { m_parent->GetLocalRotation().x + m_rotation.x , m_parent->GetLocalRotation().y + m_rotation.y ,m_parent->GetLocalRotation().z + m_rotation.z };
+		worldRot = { m_parent->GetWorldRotation().x + m_rotation.x , m_parent->GetWorldRotation().y + m_rotation.y ,m_parent->GetWorldRotation().z + m_rotation.z };
 	return worldRot;
 }
 
@@ -23,7 +23,9 @@ XMFLOAT3 GameObject::GetWorldPosition()
 {
 	XMFLOAT3 worldPos = { m_position.x, m_position.y, m_position.z };
 	if (m_parent) {
-		worldPos = { m_parent->GetLocalPosition().x + m_position.x , m_parent->GetLocalPosition().y + m_position.y, m_parent->GetLocalPosition().z + m_position.z };
+		worldPos = { m_parent->GetWorldPosition().x + m_position.x,
+			m_parent->GetWorldPosition().y + m_position.y,
+			m_parent->GetWorldPosition().z + m_position.z };
 	}
 	return worldPos;
 }
@@ -31,7 +33,9 @@ XMFLOAT3 GameObject::GetWorldPosition()
 GameObject::GameObject(std::string name)
 {
 	m_name = name;
-	m_scale = { 1,1,1 };
+	SetPosition({ 0,0,0 });
+	SetRotation({ 0,0,0 });
+	SetScale({ 1,1,1 });
 }
 
 GameObject::~GameObject()
@@ -55,23 +59,15 @@ GameObject* GameObject::GetParent()
 
 XMMATRIX GameObject::GetWorldMatrix()
 {
-	XMFLOAT3 worldRot = GetWorldRotation();
-	m_rotationQuat = XMMatrixRotationRollPitchYaw(XMConvertToRadians(worldRot.x), XMConvertToRadians(worldRot.y), XMConvertToRadians(worldRot.z));
-
-	XMFLOAT3 worldPos = GetWorldPosition();
-
-	XMMATRIX trans = XMMatrixTranslation(worldPos.x, worldPos.y, worldPos.z);
-	XMMATRIX rot = m_rotationQuat;
-	XMMATRIX scale = XMMatrixScaling(m_scale.x, m_scale.y, m_scale.z);
-
-	return scale*rot*trans;
+	UpdateWorldMat();
+	return m_worldMatrix;
 }
 
 XMFLOAT3 GameObject::GetForward()
 {
 	XMFLOAT3 worldRot = GetWorldRotation();
-	m_rotationQuat = XMMatrixRotationRollPitchYaw(XMConvertToRadians(worldRot.x), XMConvertToRadians(worldRot.y), XMConvertToRadians(worldRot.z));
-	XMVECTOR v = XMVector3Transform(XMVECTOR{ 0,0,1 }, m_rotationQuat);
+	XMMATRIX rot = XMMatrixRotationRollPitchYaw(XMConvertToRadians(worldRot.x), XMConvertToRadians(worldRot.y), XMConvertToRadians(worldRot.z));
+	XMVECTOR v = XMVector3Transform(XMVECTOR{ 0,0,1 }, rot);
 	
 	return XMFLOAT3{ v.x, v.y, v.z};
 }
@@ -79,8 +75,8 @@ XMFLOAT3 GameObject::GetForward()
 XMFLOAT3 GameObject::GetRight()
 {
 	XMFLOAT3 worldRot = GetWorldRotation();
-	m_rotationQuat = XMMatrixRotationRollPitchYaw(XMConvertToRadians(worldRot.x), XMConvertToRadians(worldRot.y), XMConvertToRadians(worldRot.z));
-	XMVECTOR v = XMVector3Transform(XMVECTOR{ 1,0,0 }, m_rotationQuat);
+	XMMATRIX rot = XMMatrixRotationRollPitchYaw(XMConvertToRadians(worldRot.x), XMConvertToRadians(worldRot.y), XMConvertToRadians(worldRot.z));
+	XMVECTOR v = XMVector3Transform(XMVECTOR{ 1,0,0 }, rot);
 
 	return XMFLOAT3{ v.x, v.y, v.z };
 }
@@ -88,8 +84,8 @@ XMFLOAT3 GameObject::GetRight()
 XMFLOAT3 GameObject::GetUp()
 {
 	XMFLOAT3 worldRot = GetWorldRotation();
-	m_rotationQuat = XMMatrixRotationRollPitchYaw(XMConvertToRadians(worldRot.x), XMConvertToRadians(worldRot.y), XMConvertToRadians(worldRot.z));
-	XMVECTOR v = XMVector3Transform(XMVECTOR{ 0,1,0 }, m_rotationQuat);
+	XMMATRIX rot = XMMatrixRotationRollPitchYaw(XMConvertToRadians(worldRot.x), XMConvertToRadians(worldRot.y), XMConvertToRadians(worldRot.z));
+	XMVECTOR v = XMVector3Transform(XMVECTOR{ 0,1,0 }, rot);
 
 	return XMFLOAT3{ v.x, v.y, v.z };
 }
@@ -133,10 +129,30 @@ void GameObject::SetPosition(XMFLOAT3 pos)
 
 void GameObject::SetRotation(XMFLOAT3 rot)
 {
-	m_rotation = rot; 
+	m_rotation = rot;
 }
 
 void GameObject::SetScale(XMFLOAT3 scale)
 {
 	m_scale = scale;
+}
+
+void GameObject::UpdateWorldMat()
+{
+	XMFLOAT3 rotVec = m_rotation;
+
+	XMFLOAT3 posVec = m_position;
+
+	XMMATRIX trans = XMMatrixTranslation(posVec.x, posVec.y, posVec.z);
+	XMMATRIX rot = XMMatrixRotationRollPitchYaw(XMConvertToRadians(rotVec.x), XMConvertToRadians(rotVec.y), XMConvertToRadians(rotVec.z));;
+	XMMATRIX scale = XMMatrixScaling(m_scale.x, m_scale.y, m_scale.z);
+
+	if (m_parent != nullptr)
+	{
+		XMMATRIX parentTrans = m_parent->GetWorldMatrix();
+		m_worldMatrix = (scale * rot * trans) * parentTrans;
+		return;
+	}
+
+	m_worldMatrix = scale * rot * trans;
 }
