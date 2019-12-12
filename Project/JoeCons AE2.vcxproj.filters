@@ -159,16 +159,10 @@
     <Filter Include="World\Gameplay\Components\Deprecated">
       <UniqueIdentifier>{cd1edc05-862b-434b-9e66-dddba04375b1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Assets\Guns">
-      <UniqueIdentifier>{edbd0ea7-fa79-4492-86d8-58fa974ec43e}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Levels\Test.jscene">
       <Filter>Assets\Levels</Filter>
-    </None>
-    <None Include="Pistol.gun">
-      <Filter>Assets\Guns</Filter>
     </None>
   </ItemGroup>
 </Project>

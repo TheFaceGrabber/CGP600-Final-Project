@@ -299,21 +299,20 @@ Scene* Scene::LoadFromFile(std::string file)
 				Camera::SetMain(cam);
 				cam->SetParent(playerObj);
 				cam->SetPosition({ 0,0.8,0 });
-
-				GameObject* mesh = new GameObject("Capsule");
-				mesh->SetParent(playerObj);
-				mesh->SetPosition({ 0, 0, 0 });
-				MeshRenderer* r = (MeshRenderer*)mesh->AddComponent(new MeshRenderer());
+				
+				GameObject* gunObj = new GameObject("Gun");
+				gunObj->SetParent(Camera::GetMain());
+				gunObj->SetPosition({ .3, -.5, 1 });
+				gunObj->SetRotation({ 0, 90, 0 });
+				MeshRenderer* r = (MeshRenderer*)gunObj->AddComponent(new MeshRenderer());
 				Mesh* m = new Mesh();
-				m->LoadFromFile("Assets/Models/Capsule.obj");
-				m->UpdateMaterial("Assets/Materials/Pigeon_Evil.jmtl");
+				m->LoadFromFile("Assets/Models/Guns/9mm.obj");
+				m->UpdateMaterial("Assets/Materials/Gun.jmtl");
 				r->SetMesh(m);
-
-
-				//Register both
+				
+				scene->RegisterGameObject(gunObj);
 				scene->RegisterGameObject(playerObj);
 				scene->RegisterGameObject(cam);
-				scene->RegisterGameObject(mesh);
 			}
 			else if (caption == "Rotation")
 			{
@@ -326,21 +325,6 @@ Scene* Scene::LoadFromFile(std::string file)
 				float x, y, z;
 				s >> x >> y >> z;
 				playerObj->SetPosition({ x,y,z });
-			}
-			else if (caption == "Weapon")
-			{
-				string gun;
-				s >> gun;
-				GameObject* gunObj = new GameObject("Gun");
-				gunObj->SetParent(Camera::GetMain());
-				gunObj->SetPosition({ .3, -.5, 1 });
-				gunObj->SetRotation({ 0, 90, 0 });
-				MeshRenderer* r = (MeshRenderer*)gunObj->AddComponent(new MeshRenderer());
-				Mesh* m = new Mesh();
-				m->LoadFromFile("Assets/Models/Guns/9mm.obj");
-				m->UpdateMaterial("Assets/Materials/Pigeon_Evil.jmtl");
-				r->SetMesh(m);
-				scene->RegisterGameObject(gunObj);
 			}
 		}
 		else if (fileCurSection == "Entity")

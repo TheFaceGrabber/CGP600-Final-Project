@@ -192,7 +192,7 @@ void Direct3D::RunUpdate()
 
 	LightingBuffer lightBuff;
 
-	Sleep(1.0f);
+	//Sleep(1.0f);
 	double t = (double)duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count() / 1000.0f;
 
 	double diff = t - m_lastTimeSample;

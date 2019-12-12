@@ -21,6 +21,7 @@ private:
 	//New design
 	GameObject* m_parent;
 	void UpdateWorldMat();
+	bool m_wasWorldMatUpdateThisFrame;
 
 public:
 	GameObject(std::string name);

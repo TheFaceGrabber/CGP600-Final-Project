@@ -60,6 +60,7 @@ GameObject* GameObject::GetParent()
 XMMATRIX GameObject::GetWorldMatrix()
 {
 	UpdateWorldMat();
+
 	return m_worldMatrix;
 }
 
@@ -100,6 +101,7 @@ void GameObject::Update()
 
 void GameObject::UpdateGfx()
 {
+	m_wasWorldMatUpdateThisFrame = false;
 	for (int i = 0; i < m_vComponents.size(); i++)
 	{
 		m_vComponents[i]->UpdateGfx();
@@ -139,6 +141,9 @@ void GameObject::SetScale(XMFLOAT3 scale)
 
 void GameObject::UpdateWorldMat()
 {
+	if (m_wasWorldMatUpdateThisFrame)
+		return;
+	
 	XMFLOAT3 rotVec = m_rotation;
 
 	XMFLOAT3 posVec = m_position;
@@ -155,4 +160,5 @@ void GameObject::UpdateWorldMat()
 	}
 
 	m_worldMatrix = scale * rot * trans;
+	m_wasWorldMatUpdateThisFrame = true;
 }
