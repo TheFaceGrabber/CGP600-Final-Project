@@ -224,9 +224,7 @@ void Direct3D::RunUpdate()
 	g_pImmediateContext->ClearRenderTargetView(g_pBackBufferRTView, rgba_clear_colour);
 	g_pImmediateContext->ClearDepthStencilView(g_pZBuffer, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-	GUI::GetInstance()->DrawGUIText(std::to_string(round((1 / m_deltaTime) * 2.f) / 2.f), -1, 1, .05);
-	GUI::GetInstance()->DrawGUIText("30/360", -1, -.9, .1);
-	GUI::GetInstance()->DrawGUIText("100%", .6, -.9, .1);
+	//GUI::GetInstance()->DrawGUIText(std::to_string(round((1 / m_deltaTime) * 2.f) / 2.f), -1, 1, .05);
 
 	if(Camera::GetMain())
 		lightBuff.CameraPosition = Camera::GetMain()->GetWorldPosition();
@@ -242,6 +240,7 @@ void Direct3D::RunUpdate()
 
 	m_pScene->UpdateGfx();
 	GUI::GetInstance()->UpdateGfx();
+	m_pScene->UpdateDestruction();
 	g_pSwapChain->Present(0, 0);
 }
 

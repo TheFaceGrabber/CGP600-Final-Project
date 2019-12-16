@@ -4,6 +4,12 @@
 #include "Direct3D.h"
 #include <xnamath.h>
 #include "Camera.h"
+#include "Scene.h"
+#include "GUI.h"
+#include "Mesh.h"
+#include "MeshRenderer.h"
+#include "BoundingBoxCollider.h"
+#include "BulletCollider.h"
 
 void FirstPersonPlayer::Start()
 {
@@ -70,5 +76,53 @@ void FirstPersonPlayer::Update()
 			cameraRot.x = m_minCameraPitch;
 
 		Camera::GetMain()->SetRotation(cameraRot);
+
+		if(Input::GetInstance()->IsMouseButtonPressed(0))
+		{
+			if (Direct3D::GetInstance()->GetTime() > m_lastFireTime + m_fireRate) 
+			{
+				if(m_bulletMesh == nullptr)
+				{
+					m_bulletMesh = new Mesh();
+					m_bulletMesh->LoadFromFile("Assets/Models/bullet.obj");
+				}
+				
+				GameObject* bullet = new GameObject("bullet");
+				bullet->SetScale({ .5 ,.5 ,.5 });
+				bullet->SetPosition(Camera::GetMain()->GetWorldPosition());
+				MeshRenderer* render = (MeshRenderer*)bullet->AddComponent(new MeshRenderer());
+				render->SetMesh(m_bulletMesh);
+				
+				BulletCollider* box = (BulletCollider*)bullet->AddComponent(new BulletCollider());
+				box->SetWidth(.25);
+				box->SetHeight(.25);
+				PhysicsComponent* phys = (PhysicsComponent*)bullet->AddComponent(new PhysicsComponent());
+				phys->SetUseGravity(false);
+
+				Direct3D::GetInstance()->GetCurrentScene()->RegisterGameObject(bullet);
+				
+				XMFLOAT3 vel = Camera::GetMain()->GetForward();
+				//vel.x *= 0.1f;
+				//vel.y *= 0.1f;
+				//vel.z *= 0.1f;
+				phys->SetVelocity(vel);
+				
+				m_lastFireTime = Direct3D::GetInstance()->GetTime();
+			}
+		}
+		
+		GUI::GetInstance()->DrawGUIText(std::to_string(m_pigeonCount) + " Pigeons Left", -1, -.92, .08);
+		GUI::GetInstance()->DrawGUIText("100%", .6, -.9, .1);
+		GUI::GetInstance()->DrawGUIText(".", -0.005, 0.005, .01);
 	}
+}
+
+void FirstPersonPlayer::AddPigeon()
+{
+	m_pigeonCount++;
+}
+
+void FirstPersonPlayer::RemovedPigeon()
+{
+	m_pigeonCount--;
 }

@@ -279,7 +279,7 @@ void Mesh::ApplyMesh()
 
 	Direct3D::GetInstance()->GetContext()->Unmap(g_pVertexBuffer, NULL);
 
-	UpdateMaterial("Assets/Materials/Tiles.jmtl");
+	UpdateMaterial("Assets/Materials/Tiles_Floor.jmtl");
 	/*m_pShader = new Shader("BlinnPhong.hlsl");
 	m_pShader->ApplyTexture("Assets/Textures/hardwood-brown-planks-albedo.png", 0);
 	m_pShader->ApplyTexture("Assets/Textures/hardwood-brown-planks-specular.tif", 1);

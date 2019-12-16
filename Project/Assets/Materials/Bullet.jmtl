@@ -1,0 +1,11 @@
+shader BlinnPhong
+
+property 1
+property 1
+property 1
+property 1
+property 1
+
+texture Assets\Textures\bullet.png
+texture Assets\Textures\Null\null_spec.tif
+texture Assets\Textures\Null\null_nml.tif

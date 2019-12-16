@@ -145,8 +145,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BoundingBoxCollider.cpp" />
+    <ClCompile Include="BulletCollider.cpp" />
     <ClCompile Include="FirstPersonPlayer.cpp" />
     <ClCompile Include="PhysicsComponent.cpp" />
+    <ClCompile Include="PigeonComponent.cpp" />
     <ClCompile Include="ShadowMap.cpp" />
     <ClCompile Include="text2D.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -193,8 +195,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BoundingBoxCollider.h" />
+    <ClInclude Include="BulletCollider.h" />
     <ClInclude Include="FirstPersonPlayer.h" />
     <ClInclude Include="PhysicsComponent.h" />
+    <ClInclude Include="PigeonComponent.h" />
     <ClInclude Include="ShadowMap.h" />
     <ClInclude Include="text2D.h" />
     <ClInclude Include="Camera.h" />

@@ -69,6 +69,7 @@ XMFLOAT3 GameObject::GetForward()
 	XMFLOAT3 worldRot = GetWorldRotation();
 	XMMATRIX rot = XMMatrixRotationRollPitchYaw(XMConvertToRadians(worldRot.x), XMConvertToRadians(worldRot.y), XMConvertToRadians(worldRot.z));
 	XMVECTOR v = XMVector3Transform(XMVECTOR{ 0,0,1 }, rot);
+	v = XMVector3Normalize(v);
 	
 	return XMFLOAT3{ v.x, v.y, v.z};
 }
@@ -78,6 +79,7 @@ XMFLOAT3 GameObject::GetRight()
 	XMFLOAT3 worldRot = GetWorldRotation();
 	XMMATRIX rot = XMMatrixRotationRollPitchYaw(XMConvertToRadians(worldRot.x), XMConvertToRadians(worldRot.y), XMConvertToRadians(worldRot.z));
 	XMVECTOR v = XMVector3Transform(XMVECTOR{ 1,0,0 }, rot);
+	v = XMVector3Normalize(v);
 
 	return XMFLOAT3{ v.x, v.y, v.z };
 }
@@ -87,6 +89,7 @@ XMFLOAT3 GameObject::GetUp()
 	XMFLOAT3 worldRot = GetWorldRotation();
 	XMMATRIX rot = XMMatrixRotationRollPitchYaw(XMConvertToRadians(worldRot.x), XMConvertToRadians(worldRot.y), XMConvertToRadians(worldRot.z));
 	XMVECTOR v = XMVector3Transform(XMVECTOR{ 0,1,0 }, rot);
+	v = XMVector3Normalize(v);
 
 	return XMFLOAT3{ v.x, v.y, v.z };
 }

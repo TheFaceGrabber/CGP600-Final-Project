@@ -32,8 +32,6 @@ void PhysicsComponent::Update()
 
 	GetOwner()->SetPosition(curPos);
 
-	m_UseGravity = true;
-
 	if (m_UseGravity)
 		m_Velocity.y += (GRAVITY * Direct3D::GetInstance()->GetDeltaTime()) * Direct3D::GetInstance()->GetDeltaTime();
 

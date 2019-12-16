@@ -46,7 +46,8 @@ Position 40 2 45
 Rotation 0 0 0
 Component MeshRenderer Assets\Models\Pigeon.obj Assets\Materials\Pigeon_Evil.jmtl
 Component PhysicsComponent
-Component BoxCollider 0.5 .08
+Component BoxCollider 0.1 .08
+Component Pigeon
 End
 
 Entity
@@ -55,16 +56,18 @@ Position 20 2 45
 Rotation 0 180 0
 Component MeshRenderer Assets\Models\Pigeon.obj Assets\Materials\Pigeon_Evil.jmtl
 Component PhysicsComponent
-Component BoxCollider 0.5 .08
+Component BoxCollider 0.1 .08
+Component Pigeon
 End
 
 Entity
-Name Evil_Pigeon
+Nasme Evil_Pigeon
 Position 15 2 35
 Rotation 0 0 0
 Component MeshRenderer Assets\Models\Pigeon.obj Assets\Materials\Pigeon_Evil.jmtl
 Component PhysicsComponent
-Component BoxCollider 0.5 .08
+Component BoxCollider 0.1 .08
+Component Pigeon
 End
 
 Entity
@@ -73,5 +76,6 @@ Position 50 2 35
 Rotation 0 0 0
 Component MeshRenderer Assets\Models\Pigeon.obj Assets\Materials\Pigeon_Evil.jmtl
 Component PhysicsComponent
-Component BoxCollider 0.5 .08
+Component BoxCollider 0.1 .08
+Component Pigeon
 End
