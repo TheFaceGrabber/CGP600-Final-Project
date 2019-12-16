@@ -15,6 +15,7 @@ void BoundingBoxCollider::Update()
 	}
 	else
 	{
+		m_didCollide = false;
 		XMFLOAT3 colliderCentrePos = {GetOwner()->GetWorldPosition().x + m_Centre.x, GetOwner()->GetWorldPosition().y + m_Centre.y, GetOwner()->GetWorldPosition().z + m_Centre.z };
 		XMFLOAT3 startingVelocity = m_pPhysComp->GetVelocity();
 
@@ -25,6 +26,8 @@ void BoundingBoxCollider::Update()
 			Direct3D::GetInstance()->GetCurrentScene()->CheckForVoxel({ colliderCentrePos.x - m_Width, (colliderCentrePos.y - m_Height), colliderCentrePos.z + m_Width }))
 		{
 			startingVelocity.y = 0;
+			m_didCollide = true;
+			m_collidedWith = nullptr;
 		}
 #pragma  endregion 
 
@@ -34,6 +37,7 @@ void BoundingBoxCollider::Update()
 			Direct3D::GetInstance()->GetCurrentScene()->CheckForVoxel({ colliderCentrePos.x - m_Width, (colliderCentrePos.y + m_Height),	colliderCentrePos.z + (m_Width+.05f) + startingVelocity.z }))
 		{
 			startingVelocity.z = 0;
+			m_didCollide = true;
 		}
 #pragma  endregion 
 
@@ -43,6 +47,8 @@ void BoundingBoxCollider::Update()
 			Direct3D::GetInstance()->GetCurrentScene()->CheckForVoxel({ colliderCentrePos.x - m_Width, (colliderCentrePos.y + m_Height),	colliderCentrePos.z - (m_Width - .05f) + startingVelocity.z }))
 		{
 			startingVelocity.z = 0;
+			m_didCollide = true;
+			m_collidedWith = nullptr;
 		}
 #pragma  endregion 
 
@@ -50,8 +56,11 @@ void BoundingBoxCollider::Update()
 		if (Direct3D::GetInstance()->GetCurrentScene()->CheckForVoxel({ colliderCentrePos.x - (m_Width + 0.05f) + startingVelocity.x, (colliderCentrePos.y),			colliderCentrePos.z + (m_Width + 0.05f) }) ||
 			Direct3D::GetInstance()->GetCurrentScene()->CheckForVoxel({ colliderCentrePos.x - (m_Width + 0.05f) + startingVelocity.x, (colliderCentrePos.y + m_Height),	colliderCentrePos.z - (m_Width - 0.05f) }))
 		{
-			if(startingVelocity.x < 0)
+			if (startingVelocity.x < 0) {
 				startingVelocity.x = 0;
+				m_didCollide = true;
+				m_collidedWith = nullptr;
+			}
 		}
 #pragma  endregion 
 
@@ -60,12 +69,23 @@ void BoundingBoxCollider::Update()
 			Direct3D::GetInstance()->GetCurrentScene()->CheckForVoxel({ colliderCentrePos.x + (m_Width + 0.05f) + startingVelocity.x, (colliderCentrePos.y + m_Height),	colliderCentrePos.z - (m_Width - 0.05f) }))
 		{
 			if (startingVelocity.x > 0)
+			{
 				startingVelocity.x = 0;
+				m_didCollide = true;
+				m_collidedWith = nullptr;
+			}
 		}
 #pragma  endregion 
 
 		m_pPhysComp->SetVelocity(startingVelocity);
+
+		if (m_didCollide)
+			Collided(m_collidedWith);
 	}
+}
+
+void BoundingBoxCollider::Collided(GameObject* obj)
+{
 }
 
 void BoundingBoxCollider::SetHeight(float h)

@@ -9,6 +9,8 @@
 #include "BoundingBoxCollider.h"
 #include "Camera.h"
 #include "FirstPersonPlayer.h"
+#include "PigeonComponent.h"
+#include <list>
 
 Scene::Scene()
 {
@@ -24,12 +26,21 @@ Scene::~Scene()
 	}
 
 	m_vGameObjects.resize(0);
+	
+	//Delete all path nodes in the list	
+	for (int i = 0; i < m_vPathNodes.size(); i++)
+	{
+		delete m_vPathNodes[i];
+	}
+
+	m_vPathNodes.resize(0);
 
 	delete m_pSky;
 }
 
 void Scene::ParseLevelGrid(Scene* scene, map<char, Block> blocks, vector<string> grid)
 {
+	scene->m_vPathNodes.resize(0);
 	map<char, vector<DefaultVertex>> meshVerts;
 
 	GameObject* level = new GameObject("Level Grid");
@@ -50,6 +61,16 @@ void Scene::ParseLevelGrid(Scene* scene, map<char, Block> blocks, vector<string>
 			yf = (float)y;
 			char curChar = grid[y][x];
 			Block block = blocks[curChar];
+			
+			//Create path node is block height is 0 (is floor)
+			if (block.Height == 0) {
+				PathNode* node = new PathNode();
+				node->x = x;
+				node->y = y;
+				node->hasBeenVisited = false;
+				node->parent = false;
+				scene->m_vPathNodes.push_back(node);
+			}
 			//Create top
 			{
 				DefaultVertex tl;
@@ -192,6 +213,36 @@ void Scene::ParseLevelGrid(Scene* scene, map<char, Block> blocks, vector<string>
 		}
 	}
 
+	//Loop through each path node
+	//Assign neighbours to each path node
+	for (int i = 0; i < scene->m_vPathNodes.size(); i++)
+	{
+		PathNode* possibleNeighbour = nullptr;
+		if(scene->m_vPathNodes[i]->x > 0)
+		{
+			possibleNeighbour = scene->GetPathNodeAtPosition(scene->m_vPathNodes[i]->x - 1, scene->m_vPathNodes[i]->y);
+			if (possibleNeighbour != nullptr)
+				scene->m_vPathNodes[i]->neighbours.push_back(possibleNeighbour);
+		}
+		if (scene->m_vPathNodes[i]->x < grid[scene->m_vPathNodes[i]->y].length())
+		{
+			possibleNeighbour = scene->GetPathNodeAtPosition(scene->m_vPathNodes[i]->x + 1, scene->m_vPathNodes[i]->y);
+			if (possibleNeighbour != nullptr)
+				scene->m_vPathNodes[i]->neighbours.push_back(possibleNeighbour);
+		}
+		if (scene->m_vPathNodes[i]->y > 0) {
+			possibleNeighbour = scene->GetPathNodeAtPosition(scene->m_vPathNodes[i]->x, scene->m_vPathNodes[i]->y - 1);
+			if (possibleNeighbour != nullptr)
+				scene->m_vPathNodes[i]->neighbours.push_back(possibleNeighbour);
+		}
+		if (scene->m_vPathNodes[i]->y < grid.size()) {
+			possibleNeighbour = scene->GetPathNodeAtPosition(scene->m_vPathNodes[i]->x, scene->m_vPathNodes[i]->y + 1);
+			if (possibleNeighbour != nullptr)
+				scene->m_vPathNodes[i]->neighbours.push_back(possibleNeighbour);
+		}
+	}
+
+	//Apply materials and vertices to level grid mesh
 	for (auto& pair : meshVerts)
 	{
 		Mesh* mesh = new Mesh();
@@ -204,11 +255,25 @@ void Scene::ParseLevelGrid(Scene* scene, map<char, Block> blocks, vector<string>
 	scene->RegisterGameObject(level);
 }
 
+//Try to get a path node at a given position
+PathNode* Scene::GetPathNodeAtPosition(int x, int y)
+{
+	for (int i = 0; i < m_vPathNodes.size(); i++)
+	{
+		if (m_vPathNodes[i]->x == x && m_vPathNodes[i]->y == y) 
+		{
+			return m_vPathNodes[i];
+		}
+	}
+	return nullptr;
+}
+
 Scene* Scene::LoadFromFile(std::string file)
 {
 	std::ifstream f(file);
 	if (!f.is_open())
 	{
+		//If the file couldn't be found then throw an error
 		throw exception("Scene file could not be opened. Reason: Location does not exists");
 		return nullptr;
 	}
@@ -225,6 +290,7 @@ Scene* Scene::LoadFromFile(std::string file)
 
 	GameObject* playerObj = nullptr;
 
+	//Loop through each line in the file
 	while (!f.eof())
 	{
 		const int size = 128;
@@ -394,6 +460,12 @@ Scene* Scene::LoadFromFile(std::string file)
 					r->SetWidth(width);
 					r->SetHeight(height);
 				}
+				else if(comp == "Pigeon")
+				{
+					int last = scene->m_vGameObjects.size() - 1;
+					PigeonComponent* r = (PigeonComponent*)scene->m_vGameObjects[last]->AddComponent(new PigeonComponent());
+					r->SetPlayer(playerObj);
+				}
 			}
 		}
 		else if (fileCurSection == "Skybox")
@@ -428,8 +500,8 @@ Scene* Scene::LoadFromFile(std::string file)
 		}
 	}
 
-	scene->m_blocks = blocksDictionary;
-	scene->m_grid = gridLines;
+	scene->m_mBlocks = blocksDictionary;
+	scene->m_vGrid = gridLines;
 	
 	ParseLevelGrid(scene, blocksDictionary, gridLines);
 
@@ -437,6 +509,7 @@ Scene* Scene::LoadFromFile(std::string file)
 	//Parse jlvl file and apply to new scene object
 }
 
+//Register a given gameobject into the scene
 bool Scene::RegisterGameObject(GameObject* obj)
 {
 	m_vGameObjects.push_back(obj);
@@ -444,12 +517,15 @@ bool Scene::RegisterGameObject(GameObject* obj)
 	return true;
 }
 
+//Destroy and remove a gameobject from the scene
 bool Scene::DestroyGameObject(GameObject* obj)
 {
 	if(std::find(m_vGameObjects.begin(), m_vGameObjects.end(), obj) != m_vGameObjects.end())
 	{
-		m_vGameObjects.erase(std::remove(m_vGameObjects.begin(), m_vGameObjects.end(), obj), m_vGameObjects.end());
-		delete obj;
+		//Apply to list of objects to destroy at the end of the frame
+		if(std::find(m_vGameObjectsForDestruction.begin(), m_vGameObjectsForDestruction.end(), obj) == m_vGameObjectsForDestruction.end())
+			m_vGameObjectsForDestruction.push_back(obj);
+		
 		return true;
 	}
 
@@ -459,6 +535,7 @@ bool Scene::DestroyGameObject(GameObject* obj)
 	return false;
 }
 
+//Process update on all game objects
 void Scene::Update()
 {
 	for (int i = 0; i < m_vGameObjects.size(); i++)
@@ -467,6 +544,17 @@ void Scene::Update()
 	}
 }
 
+void Scene::UpdateDestruction()
+{
+	for (int i = 0; i < m_vGameObjectsForDestruction.size(); i++)
+	{
+		m_vGameObjects.erase(std::remove(m_vGameObjects.begin(), m_vGameObjects.end(), m_vGameObjectsForDestruction[i]), m_vGameObjects.end());
+		delete m_vGameObjectsForDestruction[i];
+	}
+	m_vGameObjectsForDestruction.resize(0);
+}
+
+//Process drawing on all game objects
 void Scene::UpdateGfx()
 {
 	if(m_pSky)
@@ -478,17 +566,13 @@ void Scene::UpdateGfx()
 	}
 }
 
+//Process drawing shadows on all game objects
 void Scene::UpdateShadowMap()
 {
 	for (int i = 0; i < m_vGameObjects.size(); i++)
 	{
 		m_vGameObjects[i]->UpdateShadowMap();
 	}
-}
-
-void Scene::Unload()
-{
-	//Tell scene manager I am unloading and then "delete this"
 }
 
 void Scene::SetSky(string material)
@@ -498,25 +582,194 @@ void Scene::SetSky(string material)
 
 bool Scene::CheckForVoxel(XMFLOAT3 pos)
 {
+	//Round the position to conform to the level grid
 	int posX = floor((pos.x / m_Scale) + 0.5);
-	float posY = (pos.y);// floor((pos.y / m_Scale));
+	float posY = (pos.y);
 	int posZ = floor((pos.z / m_Scale) + 0.5);
 
 	Block block;
 	char key;
 
-	if (posZ < 0 || posZ >= m_grid.size())
+	//Make sure we are actually inside of the level
+	if (posZ < 0 || posZ >= m_vGrid.size())
 		return false;
 
-	if (posX < 0 || posX >= m_grid[posZ].size())
+	//Make sure we are actually inside of the level
+	if (posX < 0 || posX >= m_vGrid[posZ].size())
 		return false;
 
-	key = m_grid[posZ][posX];
-	block = m_blocks[key];
+	//Get the block key based upon the rounded positions
+	key = m_vGrid[posZ][posX];
+	//Get the block object from the key
+	block = m_mBlocks[key];
 
+	//We are colliding if the block at the given position is higher than our height
 	if (block.Height * m_Scale >= posY)
 		return true;
 
 	return false;
+}
+
+GameObject* Scene::CheckForObjectCollision(GameObject* object, XMFLOAT3 pos, float width, float height, bool ignorePlayer)
+{
+	/*float xMin = pos.x - width;
+	float xMax = pos.x + width;
+
+	float zMin = pos.z - width;
+	float zMax = pos.z + width;
+
+	float yMin = pos.y - height;
+	float yMax = pos.y + height;
+	*/
+	
+	for (int i = 0; i < m_vGameObjects.size(); i++)
+	{
+		if (m_vGameObjects[i] == object || (m_vGameObjects[i]->GetName() == "Player" && ignorePlayer))
+			continue;
+
+		BoundingBoxCollider* col = m_vGameObjects[i]->GetComponent<BoundingBoxCollider>();
+		if (col == nullptr)
+			continue;
+
+		XMFLOAT3 objPos = m_vGameObjects[i]->GetWorldPosition();
+
+		objPos.x += col->GetCentre().x;
+		objPos.y += col->GetCentre().y;
+		objPos.z += col->GetCentre().z;
+
+		/*float ObjxMin = objPos.x - col->GetWidth();
+		float ObjxMax = objPos.x + col->GetWidth();
+
+		float objzMin = objPos.z - col->GetWidth();
+		float objzMax = objPos.z + col->GetWidth();
+
+		float ObjyMin = objPos.y - col->GetWidth();
+		float ObjyMax = objPos.y + col->GetWidth();
+		*/
+		if (abs(pos.x - objPos.x) > width + col->GetWidth())
+			continue;
+
+		if (abs(pos.z - objPos.z) > width + col->GetWidth())
+			continue;
+
+		if (abs(pos.y - objPos.y) > height + col->GetHeight())
+			continue;
+
+		return m_vGameObjects[i];
+	}
+
+	return nullptr;
+}
+
+std::vector<XMFLOAT3> Scene::GetAStarPath(XMFLOAT3 startPos, XMFLOAT3 endPos)
+{
+	std::vector<XMFLOAT3> output = {};
+
+	XMFLOAT3 roundedStart = { startPos.x,startPos.y,startPos.z };
+	XMFLOAT3 roundedEnd = { endPos.x,endPos.y,endPos.z };
+	
+	//Round start pos to level grid
+	roundedStart.x = floor((roundedStart.x / m_Scale) + 0.5);
+	roundedStart.z = floor((roundedStart.z / m_Scale) + 0.5);
+
+	//Round start pos to level grid
+	roundedEnd.x = floor((roundedEnd.x / m_Scale) + 0.5);
+	roundedEnd.z = floor((roundedEnd.z / m_Scale) + 0.5);
+
+	//All grid sections with a height of 0 will be counted as a pathing node
+
+	//First check if the rounded start position and rounded end position are the same (they are at the same path node)
+	//If so, just add the unrounded end position to the output list and return it
+	if (roundedEnd.x == roundedStart.x && roundedEnd.z == roundedStart.z) 
+	{
+		output.push_back(endPos);
+		return output;
+	}
+
+	//Get nodes at the rounded start and end pos
+	PathNode* startNode = GetPathNodeAtPosition(roundedStart.x, roundedStart.z);
+	PathNode* endNode = GetPathNodeAtPosition(roundedEnd.x, roundedEnd.z);
+
+	//If either of those nodes don't exist, return null because the algorithm cannot be completed without them
+	if (startNode == nullptr || endNode == nullptr)
+		return output;
+	
+	//A* Algorithm here
+	
+	//Reset all nodes
+	for (int i = 0; i < m_vPathNodes.size(); i++)
+	{
+		m_vPathNodes[i]->hasBeenVisited = false;
+		m_vPathNodes[i]->globalGoal = INFINITY;
+		m_vPathNodes[i]->localGoal = INFINITY;
+		m_vPathNodes[i]->parent = nullptr;
+	}
+
+	//Lambda function to get the heuristic (distance) used for A*
+	auto heuristic = [](PathNode* a, PathNode* b)
+	{
+		return sqrtf((a->x - b->x) * (a->x - b->x) + (a->y - b->y) * (a->y - b->y));
+	};
+
+	//start the search at the starting node
+	PathNode* currentNode = startNode;
+	startNode->localGoal = 0;
+	startNode->globalGoal = heuristic(startNode, endNode);
+
+	list<PathNode*> nodesToTest;
+	nodesToTest.push_back(startNode);
+
+	//Run this loop so long as we have nodes to test
+	while(!nodesToTest.empty())
+	{
+		//Sort our nodes to test by their global goal (based upon the heuristic)
+		nodesToTest.sort([](const PathNode* lhs, const PathNode* rhs) { return lhs->globalGoal < rhs->globalGoal; });
+
+		//If the next node in the list has already been tested, remove it
+		while (!nodesToTest.empty() && nodesToTest.front()->hasBeenVisited)
+			nodesToTest.pop_front();
+
+		//If we have no more nodes to test, leave the loop
+		if (nodesToTest.empty())
+			break;
+
+		//Get next node to test
+		currentNode = nodesToTest.front();
+		currentNode->hasBeenVisited = true;
+
+		//Loop through its neighbours
+		for (int i = 0; i < currentNode->neighbours.size(); i++)
+		{
+			if (!currentNode->neighbours[i]->hasBeenVisited)
+				nodesToTest.push_back(currentNode->neighbours[i]);
+
+			//Calculate what maybe possibly be a better goal value based on the parent nodes goal and heuristic (distance)
+			float possiblyLowerGoal = currentNode->localGoal + heuristic(currentNode, currentNode->neighbours[i]);
+
+			if(possiblyLowerGoal < currentNode->neighbours[i]->localGoal)
+			{
+				currentNode->neighbours[i]->parent = currentNode;
+				currentNode->neighbours[i]->localGoal = possiblyLowerGoal;
+
+				currentNode->neighbours[i]->globalGoal = currentNode->neighbours[i]->localGoal + heuristic(currentNode->neighbours[i], endNode);
+			}
+		}
+	}
+
+	//Add the end pos to the output list
+	//This is because the end pos might not necessarily be on the grid
+	output.push_back(endPos);
+	currentNode = endNode->parent;
+	//Go through each node, adding it and finding its parent until we have reach the starting node
+	while(currentNode != startNode)
+	{
+		output.push_back({ (float)currentNode->x * m_Scale,0,(float)currentNode->y * m_Scale });
+		currentNode = currentNode->parent;
+	}
+
+	//Reverse the output list so it goes to start to end and not end to start
+	std::reverse(output.begin(), output.end());
+	
+	return output;
 }
 

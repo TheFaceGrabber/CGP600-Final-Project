@@ -8,6 +8,10 @@
 
 class BoundingBoxCollider : public Component
 {
+protected:
+	bool m_didCollide;
+	GameObject* m_collidedWith;
+	
 private:
 	PhysicsComponent* m_pPhysComp;
 	float m_Height;
@@ -17,6 +21,8 @@ private:
 public:
 	void Start() override;
 	void Update() override;
+
+	virtual void Collided(GameObject* obj);
 
 	void SetHeight(float h);
 	void SetWidth(float w);
